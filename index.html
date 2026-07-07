@@ -1058,6 +1058,84 @@ table:not(.tenji-table):not(.prob-table) tr:last-child td {
   padding: .9rem 1.1rem; font-size: 11px; color: var(--text3); line-height: 1.8; margin-top: 1.5rem;
 }
 .disclaimer-box strong { color: var(--text2); }
+
+/* combo-chip はアイコン＋長文が混在するため、常に折り返し可能にしておく（スマホでのはみ出し防止） */
+.combo-chip { flex-wrap: wrap; white-space: normal; max-width: 100%; word-break: break-word; row-gap: 3px; }
+.combo-chip .boat-circle { flex-shrink: 0; }
+
+/* ==========================================================
+   スマホ幅（〜600px）でのレイアウト崩れ対策
+   ========================================================== */
+@media (max-width: 600px) {
+  /* 会場ヒーロー：長い会場名でも崩れないように */
+  .venue-hero-title { font-size: 1.5rem; gap: 6px; }
+  .venue-hero-eyebrow { font-size: 8px; letter-spacing: .16em; }
+  .venue-hero-sub { font-size: .74rem; }
+  .venue-hero-badges { gap: 5px; }
+  .vh-badge { font-size: 9px; padding: 3px 7px; }
+
+  /* サブタブ（会場サマリー／気象条件攻略／…）：等分縮小ではなく横スクロールに切り替え、
+     長いラベルがボタン内で潰れて隣と重なるのを防ぐ */
+  .tab-bar { gap: 2px; }
+  .tab-bar .tab-btn {
+    flex: 0 0 auto;
+    min-width: max-content;
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  /* コース別1着率バー：数値列の最小幅を縮めて折り返し・重なりを防止 */
+  .course-bar-row { gap: 6px; padding: 6px 0; }
+  .course-bar-pct { min-width: 3.2em; font-size: .74rem; }
+  .course-bar-diff { min-width: 3em; font-size: 9px; }
+
+  /* 決まり手内訳：帯の中の文字は小さい区画で欠けて重なって見えるため非表示にし、
+     下の凡例（数値付き）だけで内訳を確認できるようにする */
+  .kimarite-stack { height: 22px; }
+  .kimarite-seg { font-size: 0; }
+  .kimarite-legend { font-size: 10px; gap: 6px 10px; }
+
+  /* ルールカードのヘッダ：バッジ類を確実に折り返す */
+  .rule-card { padding: .85rem .9rem; }
+  .rule-card-head { gap: 6px; }
+  .rule-no { font-size: 10px; }
+  .rule-title { font-size: .86rem; min-width: 100%; order: 3; }
+  .rule-tag { font-size: 9px; padding: 2px 6px; }
+  .rule-reliability { font-size: 9px; padding: 2px 6px; white-space: normal; text-align: right; }
+  .rule-desc { font-size: .78rem; }
+
+  /* 分布バー：数値ラベルが折り返さないよう最小幅を調整 */
+  .rule-dist-row { gap: 6px; }
+  .rule-dist-val { min-width: 5.5em; font-size: .72rem; }
+
+  /* 推奨舟券エリア：ラベルを上段に独立させ、チップ群を下段に */
+  .rule-buy { flex-direction: column; align-items: stretch; gap: 6px; }
+  .rule-buy-label { padding-top: 0; }
+  .rule-buy-combos { gap: 5px; }
+  .combo-chip { font-size: .76rem; padding: 3px 7px; }
+
+  /* レース番号別 荒れスコア：12マス1列だと潰れて数字が重なるため、6列×2段に折り返す */
+  .raceno-strip { flex-wrap: wrap; gap: 5px; }
+  .raceno-cell { flex: 0 0 calc((100% - 25px) / 6); }
+
+  /* 1号艇診断フォーム：4項目を2列で確実に収める */
+  #tab-scouting-suminoe [style*="grid-template-columns"],
+  #tab-scouting-gamagori [style*="grid-template-columns"],
+  #tab-scouting-tokoname [style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .section-heading { font-size: .76rem; flex-wrap: wrap; row-gap: 4px; }
+  .section-heading-note { flex-basis: 100%; }
+
+  .stat-card-value { font-size: 1.1rem; }
+}
+
+@media (max-width: 380px) {
+  .raceno-cell { flex: 0 0 calc((100% - 20px) / 5); }
+  .venue-hero-title { font-size: 1.3rem; }
+}
 </style>
 </head>
 <body>
