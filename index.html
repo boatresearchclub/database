@@ -2081,7 +2081,7 @@ table:not(.tenji-table):not(.prob-table) tr:last-child td {
     <div class="venue-hero-eyebrow">TOKONAME ／ COURSE STRATEGY</div>
     <div class="venue-hero-title">常滑 <small>条件攻略</small></div>
     <div class="venue-hero-sub">集計期間：気象データ 2023-01-01〜2026-05-31（n=5,994）／ 会場基本統計・展開データ 直近1年 2025-05-31〜2026-05-31（n=1,792）<br>住之江・蒲郡と同じロジックで、常滑固有の気象・決まり手傾向を条件カード化しています。</div>
-    <div class="venue-hero-badges"><span class="vh-badge accent">イン逃げ率 57%（全国+4pt）</span><span class="vh-badge">荒れスコア 43</span><span class="vh-badge">条件ルール 19件（選手指数連動4件含む）</span></div>
+    <div class="venue-hero-badges"><span class="vh-badge accent">イン逃げ率 57%（全国+4pt）</span><span class="vh-badge">荒れスコア 43</span><span class="vh-badge">条件ルール 24件（選手指数連動9件含む）</span></div>
   </div>
 
   <div class="tab-bar">
@@ -2375,6 +2375,79 @@ table:not(.tenji-table):not(.prob-table) tr:last-child td {
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">2連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>／3連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span></div>
+      </div>
+    </div>
+
+    <div class="section-heading">号艇別：決まり手%から「頭」を狙う条件<span class="section-heading-note">📊コース別マスタ（全国・選手×コース）× 常滑 決まり手内訳（直近1年）</span></div>
+    <div class="rule-desc" style="margin-bottom:1.1rem;">「📊コース別マスタ」で各号艇の選手を<span class="num">コース＝該当号艇</span>で検索すると、その選手がそのコースでどの決まり手を得意にしているか（差し%・まくり%・まくり差し%）が出ます。得意技の出現率が全国平均より高い選手が入っている号艇は、常滑でその決まり手が最も実を結ぶ号艇と重なる時、頭（1着）候補として信頼度が上がります。</div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">T-2</span>
+        <span class="rule-tag kimarite">2号艇の差し%</span>
+        <span class="rule-title">差し%が12%以上（全国上位25%）なら頭候補</span>
+        <span class="rule-reliability high">常滑：差し決着184件の72%（133件）が2号艇</span>
+      </div>
+      <div class="rule-desc">全国の2号艇平均は<span class="num">差し% 中央値7%</span>。12%以上（上位25%）、特に<span class="num">17%以上（上位10%）</span>は差しの得意な2号艇。常滑は差しで決まる184レースの<span class="num">72%</span>を2号艇が占めており、得意な選手が入っていれば頭固定の説得力が増す。</div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-流し／3連単<span class="boat-circle b2">2</span>-流し-流し</div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">T-3</span>
+        <span class="rule-tag kimarite">3号艇のまくり%／まくり差し%</span>
+        <span class="rule-title">いずれかが8%以上（全国上位25%）なら頭候補</span>
+        <span class="rule-reliability high">常滑：まくり262件中24%（63件）／まくり差し209件中36%（76件）が3号艇</span>
+      </div>
+      <div class="rule-desc">全国中央値はまくり%・まくり差し%とも<span class="num">4%</span>前後。どちらかが8%以上（上位25%）の3号艇は要警戒。常滑は特にまくり差しの決着に3号艇が絡む比率が<span class="num">36%</span>と高く、まくり差し%が高いタイプの方が相性が良い。</div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連単<span class="boat-circle b3">3</span>-流し-流し／3連複<span class="boat-circle b3">3</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">T-4</span>
+        <span class="rule-tag kimarite">4号艇のまくり%</span>
+        <span class="rule-title">まくり%が8%以上（全国上位25%）なら頭候補、13%以上は要注目</span>
+        <span class="rule-reliability high">常滑：まくり決着262件の41%（107件）が4号艇（全コース中最多）</span>
+      </div>
+      <div class="rule-desc">全国の4号艇平均は<span class="num">まくり% 中央値4%</span>。8%以上（上位25%）、13%以上（上位10%）はまくりの得意な4号艇。常滑はまくりで決まる262レースの<span class="num">41%</span>を4号艇が占め、全コース中最も「まくりの主役」になりやすい席なので、得意選手が入っていれば頭候補の筆頭。</div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連単<span class="boat-circle b4">4</span>-流し／3連単<span class="boat-circle b4">4</span>-流し-流し</div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">T-5</span>
+        <span class="rule-tag kimarite">5号艇のまくり差し%</span>
+        <span class="rule-title">まくり差し%が7%以上（全国上位25%）なら頭候補</span>
+        <span class="rule-reliability mid">常滑：まくり差し決着209件の36%（76件）が5号艇（3号艇と同率トップ）</span>
+      </div>
+      <div class="rule-desc">全国の5号艇平均は<span class="num">まくり差し% 中央値4%</span>。7%以上（上位25%）は常滑では特に狙い目で、まくり差しの決着に5号艇が絡む比率は<span class="num">36%</span>と3号艇と並んで最多。他会場ではあまり見ない常滑特有の高さで、配当妙味も大きい。</div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連単<span class="boat-circle b5">5</span>-流し-流し（穴狙い）／3連複<span class="boat-circle b5">5</span><span class="boat-circle b1">1</span><span class="boat-circle b3">3</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">T-6</span>
+        <span class="rule-tag kimarite">6号艇のまくり差し%</span>
+        <span class="rule-title">個人指数が高くても頭固定は非推奨</span>
+        <span class="rule-reliability low">常滑：6号艇が1着を取るのは全体の5%程度（K-0参照）</span>
+      </div>
+      <div class="rule-desc">6号艇のまくり差し%は全国上位25%でも<span class="num">3%</span>程度と絶対水準が低く、常滑全体でも6号艇が1着を取るケース自体が<span class="num">5%</span>前後（K-0）にとどまる。個人指数が多少高くても単独の頭固定根拠にするには弱く、あくまで3連複などの「保険」の一枠として扱うのが妥当。</div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">頭固定は非推奨／3連複の3着目候補として少点数だけ添える</div>
       </div>
     </div>
   </div>
