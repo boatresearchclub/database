@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRC攻略データベース</title>
+<style>
+:root {
+  --bg: #f6f8fb;
+  --bg2: #ffffff;
+  --bg3: #f0f5ff;
+  --bg4: #e7eefc;
+  --border: rgba(0, 40, 90, 0.16);
+  --border2: rgba(0, 40, 90, 0.26);
+  --text: #0a0e16;
+  --text2: #28324a;
+  --text3: #515f7a;
+  --accent: #0066ff;
+  --accent2: #1a7dff;
+  --gold: #ffb300;
+  --green: #00b86b;
+  --green2: #d9f6ea;
+  --red: #ff3b3b;
+  --red2: #ffe1e1;
+  --orange: #e2680a;
+  --orange2: #fff1e0;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+.site-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  min-height: 52px;
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9rem; letter-spacing: .03em; flex-shrink: 0; }
+.logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.header-right { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.header-meta-area { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; min-width: 0; }
+.header-meta { font-size: 12px; color: var(--text2); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-meta strong { color: var(--text); }
+.container { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem; }
+/* PC幅揃え用インナーラッパー */
+.nav-inner { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
+.site-header .nav-inner { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 6px; }
+
+/* TABS */
+.tab-bar { display: flex; gap: 0; margin-bottom: 1rem; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn { flex: 1; min-width: 0; padding: 8px 4px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; font-weight: 500; white-space: nowrap; text-align: center; }
+.tab-btn:hover { color: var(--text2); }
+.tab-btn.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+
+/* VENUE TABS */
+.sticky-nav-venue { overflow-x: visible; display: block; border-bottom: 1px solid var(--border); }
+.sticky-nav-venue::-webkit-scrollbar { display: none; }
+#venue-tabs { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; gap: 2px; display: flex; touch-action: pan-x; }
+#venue-tabs::-webkit-scrollbar { display: none; }
+.vtab { flex-shrink: 0; padding: 6px 10px 8px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; font-weight: 500; white-space: nowrap; }
+.vtab:hover { color: var(--text2); }
+.vtab.loaded { color: var(--text2); font-weight: 700; }
+.vtab.active { color: var(--accent2) !important; border-bottom-color: var(--accent); }
+
+/* RACE BAR */
+.sticky-nav { background: var(--bg2); border-bottom: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,40,90,0.06); }
+.sticky-nav--upper { position: relative; }
+.sticky-nav--lower { position: sticky; top: 52px; z-index: 90; }
+.sticky-nav-race { overflow-x: visible; }
+.sticky-nav-race::-webkit-scrollbar { display: none; }
+.sticky-nav-race-inner { display: flex; gap: 4px; padding: 5px 0; min-width: max-content; }
+.race-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: border-color .15s, background .15s; min-width: 48px; flex-shrink: 0; position: relative; }
+.race-btn::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: transparent; border-radius: var(--radius-sm) var(--radius-sm) 0 0; transition: background .15s; }
+.race-btn:hover { border-color: var(--border2); background: var(--bg3); }
+.race-btn.active { border-color: var(--accent); background: var(--bg3); }
+.race-btn.active::before { background: var(--accent); }
+.race-btn-no { font-size: 12px; font-weight: 700; color: var(--text); }
+.race-btn-time { font-size: 9px; color: var(--text3); }
+
+/* DETAIL PANEL */
+.detail-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.25rem; box-shadow: 0 6px 18px rgba(0,40,90,0.08); }
+.bt-head-simple { display: grid; grid-template-columns: 32px 82px 40px 28px 60px 52px 52px; gap: 4px; padding: .4rem 1.25rem; font-size: 11px; color: var(--text2); font-weight: 700; letter-spacing: .08em; border-bottom: 1px solid var(--border2); background: var(--bg4); }
+.detail-panel .bt-row { grid-template-columns: 32px 82px 40px 28px 60px 52px 52px; }
+.bt-row { display: grid; grid-template-columns: 32px 82px 40px 28px 60px 52px 52px; gap: 4px; padding: .75rem 1.25rem; align-items: center; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 500; transition: background .12s; }
+.bt-row:nth-child(even) { background: rgba(0, 40, 90, 0.025); }
+.bt-row:last-child { border-bottom: none; }
+.bt-row:hover { background: var(--bg4); }
+/* .bt-row.top1 removed */
+.bt-grade { font-size: 11px; color: var(--text2); font-weight: 700; }
+
+/* BOAT CIRCLES */
+.boat-circle { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.b1 { background: #ffffff; color: #111; border: 1.5px solid rgba(0,0,0,0.35); }
+.b2 { background: #000000; color: #fff; }
+.b3 { background: #e60012; color: #fff; }
+.b4 { background: #0066cc; color: #fff; }
+.b5 { background: #ffcc00; color: #111; }
+.b6 { background: #00a651; color: #fff; }
+
+/* GRADE TAGS */
+.grade-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+.ga1 { background: rgba(79,124,255,.22); color: #1a5ce0; }
+.ga2 { background: rgba(79,124,255,.13); color: #3d6fd6; }
+.gb1 { background: var(--bg4); color: var(--text2); }
+.gb2 { background: rgba(255,90,90,.15); color: #d6453f; }
+
+/* PERSISTENT BANNERS (タブ共通・常時表示) */
+#persistent-banners { margin-bottom: 0; }
+#persistent-banners .insufficient-banner,
+#persistent-banners .course-order-banner { border-radius: 0; margin: 0; }
+#persistent-banners:not(:empty) { margin-bottom: 0.75rem; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+
+/* INSUFFICIENT BANNER */
+.insufficient-banner { display: flex; align-items: center; gap: 7px; padding: .55rem 1.25rem; background: rgba(255,122,0,0.08); border-bottom: 1px solid rgba(255,122,0,0.18); font-size: 12px; color: var(--orange); line-height: 1.4; }
+
+/* COURSE ORDER BANNER (進入変更) */
+.course-order-banner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: .5rem 1.25rem; font-size: 12px; border-bottom: 1px solid rgba(255,59,59,0.22); background: rgba(255,59,59,0.07); color: var(--red); line-height: 1.5; }
+.course-order-banner .cb-icon { font-size: 14px; flex-shrink: 0; }
+.course-order-banner .cb-text { font-weight: 700; flex-shrink: 0; }
+.course-order-banner .cb-order { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; }
+.course-order-banner .cb-sep { color: var(--text3); font-size: 10px; }
+
+/* WEATHER BAR */
+.weather-bar { border-top: 1px solid var(--border); }
+.weather-bar-title, .tenji-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  color: var(--text3); text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 0;
+}
+.weather-bar-body {
+  display: flex; flex-wrap: wrap; gap: 6px 16px;
+  padding: 0.6rem 1rem;
+  background: var(--bg2);
+  font-size: 12px; color: var(--text2);
+  align-items: center;
+  justify-content: center;
+}
+.weather-item { display: flex; align-items: center; gap: 4px; }
+.weather-item .wi-label { color: var(--text3); font-size: 11px; }
+.weather-item .wi-val   { font-weight: 700; color: var(--text); }
+.wind-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 4px; vertical-align: middle; }
+.wind-badge.tail        { background: #ffe1e1; color: var(--red);    } /* 追い風 */
+.wind-badge.head        { background: #e1eeff; color: var(--accent); } /* 向かい風 */
+.wind-badge.cross_right { background: #f0f0f0; color: var(--text3);  } /* 右横風 */
+.wind-badge.cross_left  { background: #f0f0f0; color: var(--text3);  } /* 左横風 */
+
+/* TENJI */
+.tenji-section { border-top: 1px solid var(--border); padding: 0; background: var(--bg3); }
+.tenji-badge { font-size: 10px; background: var(--accent); color: #fff; border-radius: 4px; padding: 1px 5px; }
+.tenji-badge.waiting { background: var(--text3); }
+.tenji-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; font-family: var(--mono); }
+.tenji-table th { text-align: center; color: var(--text3); font-weight: 500; font-size: 0.72rem; padding: 5px 6px 5px; border-bottom: 1px solid var(--border); }
+.tenji-table td { text-align: center; padding: 5px 6px; border-bottom: 1px solid var(--border); color: var(--text); }
+.tenji-table td:nth-child(2) { text-align: center; font-family: 'Noto Sans JP', sans-serif; font-size: 0.8rem; }
+.tenji-table tr:last-child td { border-bottom: none; }
+.tenji-table tr:hover td { background: var(--bg3); }
+.tenji-best { color: var(--red); font-weight: 700; }
+.tenji-rank1 { color: var(--accent); font-weight: 700; }
+.tenji-waiting { text-align: center; color: var(--text3); font-size: 0.8rem; padding: 0.65rem 1rem; width: 100%; }
+.tenji-delta-plus  { color: #22c55e; font-size: 11px; font-weight: 600; }
+.tenji-delta-minus { color: #ef4444; font-size: 11px; font-weight: 600; }
+.tenji-tilt { font-size: 0.72rem; color: var(--text3); }
+
+/* 汎用テーブル（展開分析・選手情報タブなど、専用クラスを持たないtable全般） */
+table:not(.tenji-table):not(.prob-table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+table:not(.tenji-table):not(.prob-table) th {
+  text-align: left;
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .03em;
+  padding: 7px 8px;
+  background: var(--bg4);
+  border-bottom: 1px solid var(--border2);
+}
+table:not(.tenji-table):not(.prob-table) td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+table:not(.tenji-table):not(.prob-table) tr:hover td {
+  background: var(--bg3);
+}
+table:not(.tenji-table):not(.prob-table) tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── RESULT TAB ── */
+.result-panel-inner { padding: 1.25rem; }
+.result-section-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+.result-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.result-row:last-of-type { border-bottom: none; }
+.result-combo { display: flex; align-items: center; gap: 3px; flex: 1; }
+.result-odds { font-family: var(--mono); font-size: 16px; font-weight: 600; color: var(--text); min-width: 80px; text-align: right; }
+.result-odds.high { color: var(--red); }
+.result-ninki { font-size: 11px; color: var(--text3); min-width: 60px; text-align: right; white-space: nowrap; }
+.result-meta-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text); }
+.result-meta-row:last-of-type { border-bottom: none; }
+.result-meta-label { color: var(--text3); font-weight: 700; font-size: 11px; min-width: 48px; }
+.result-henkan-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; font-size: 12px; color: var(--text); border-bottom: 1px solid var(--border); }
+
+/* COMMENT */
+.comment-section { border-top: 1px solid var(--border); padding: 0.875rem 0.75rem 0.5rem; }
+.comment-title { font-size: 0.78rem; font-weight: 700; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px; }
+.comment-badge { font-size: 10px; background: var(--green); color: #fff; border-radius: 4px; padding: 1px 5px; }
+.comment-row { display: grid; grid-template-columns: 28px 5.5em 1fr; gap: 6px 8px; align-items: baseline; font-size: 0.82rem; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.comment-row:last-child { border-bottom: none; }
+.comment-name { font-weight: 600; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8rem; }
+.comment-text { color: var(--text); font-size: 0.8rem; line-height: 1.5; }
+.comment-empty { color: var(--text3); font-size: 0.8rem; font-style: italic; }
+.comment-keyword { display: inline-block; background: var(--orange2); color: var(--orange); border-radius: 3px; font-size: 10px; font-weight: 700; padding: 0 4px; margin-right: 3px; vertical-align: middle; }
+.comment-keyword.good { background: var(--green2); color: var(--green); }
+.comment-keyword.bad  { background: var(--red2); color: var(--red); }
+
+/* BUY */
+.buy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 1.25rem; border-top: 1px solid var(--border); background: var(--bg3); }
+@media (max-width: 480px) { .buy-grid { grid-template-columns: 1fr; } }
+.buy-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .875rem 1rem; box-shadow: 0 6px 18px rgba(0,40,90,0.08); }
+.buy-card-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.buy-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.buy-row:last-child { border-bottom: none; }
+.buy-label { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 30px; text-align: center; }
+.bl-honmei { background: rgba(61,214,140,.15); color: var(--green); }
+.bl-taikou { background: rgba(245,200,66,.12); color: var(--gold); }
+.bl-ana, .bl-gyaku { background: rgba(255,90,90,.15); color: #d6453f; }
+/* 決まり手別カラー */
+.bl-nige    { background: rgba(0,102,255,.13); color: var(--accent2); }        /* 逃げ: 青 */
+.bl-sashi   { background: rgba(0,184,107,.13); color: var(--green); }          /* 差し: 緑 */
+.bl-makuri  { background: rgba(255,59,59,.13); color: var(--red); }            /* まくり: 赤 */
+.bl-makusas { background: rgba(255,122,0,.13); color: var(--orange); }         /* まくり差し: オレンジ */
+.bl-nuki    { background: rgba(108,122,148,.15); color: var(--text2); }        /* 抜き: グレー */
+/* シナリオグループ区切り */
+.buy-scenario-header { display:flex; align-items:center; gap:7px; padding:7px 0 4px; font-size:11px; font-weight:700; color:var(--text3); letter-spacing:.06em; border-top:1px solid var(--border); margin-top:2px; }
+.buy-scenario-header:first-child { border-top:none; margin-top:0; }
+.buy-scenario-rank { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:var(--accent); color:#fff; font-size:9px; font-weight:700; flex-shrink:0; }
+.buy-scenario-rank.s2 { background:var(--text3); }
+.buy-scenario-rank.s3 { background:var(--text3); opacity:.7; }
+.buy-combo { font-family: var(--mono); font-size: 15px; font-weight: 500; flex: 1; letter-spacing: 2px; }
+.buy-weight { display: flex; gap: 2px; }
+.wdot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.wdot.empty { background: var(--bg4); }
+.hit-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: var(--gold); color: #5a3a00; flex-shrink: 0; }
+.buy-row.hit { background: rgba(255,179,0,0.10); border-radius: 4px; }
+
+.scenario-bar { padding: .75rem 1.25rem; border-bottom: 1px solid var(--border); font-size: 13px; display: flex; align-items: center; gap: 10px; }
+.scenario-bar.safe { background: rgba(61,214,140,.07); border-left: 3px solid var(--green); }
+.scenario-bar.warn { background: rgba(255,90,90,.07); border-left: 3px solid var(--red); }
+.scenario-bar.mix  { background: rgba(79,124,255,.07); border-left: 3px solid var(--accent); }
+
+
+/* 過去レース（締め切り済み）*/
+.race-btn.past { opacity: 0.38; filter: grayscale(0.4); }
+.race-btn.past .race-btn-no { color: var(--text3); }
+
+/* 更新ボタン */
+#refresh-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg3);
+  color: var(--accent);
+  border: 1px solid var(--border2);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+#refresh-btn:active { transform: scale(0.9); }
+@keyframes spin { to { transform: rotate(360deg); } }
+#refresh-btn.spinning { animation: spin 0.7s linear infinite; color: var(--accent2); }
+
+/* ── DEADLINE ALERT STRIP ── */
+#alert-strip {
+  background: #fff8ee;
+  border-bottom: 1px solid rgba(239,159,39,0.35);
+  padding: 0;
+  display: block;
+}
+#alert-strip .nav-inner { padding-top: 7px; padding-bottom: 8px; }
+.alert-strip-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .09em;
+  color: #854F0B; text-transform: uppercase;
+  margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
+}
+.alert-strip-cards {
+  display: flex; gap: 6px; overflow-x: auto;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.alert-strip-cards::-webkit-scrollbar { display: none; }
+.alert-card {
+  flex-shrink: 0; background: #fff;
+  border: 1px solid rgba(239,159,39,0.55);
+  border-radius: var(--radius-sm); padding: 6px 8px;
+  width: 86px; min-width: 86px; max-width: 86px;
+  height: 86px; min-height: 86px; max-height: 86px;
+  box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: center;
+  overflow: hidden; cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.alert-card:hover { background: #fff1e0; }
+.alert-card.urgent { border-color: rgba(229,57,53,0.55); background: #fff5f5; }
+.alert-card.urgent:hover { background: #ffe1e1; }
+.alert-card-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9px; font-weight: 700; padding: 1px 5px;
+  border-radius: 3px; background: #fae0b0; color: #633806;
+  margin-bottom: 3px; letter-spacing: .03em;
+}
+.alert-card.urgent .alert-card-badge { background: #fdd; color: #791F1F; }
+.alert-card-venue { font-size: 11px; color: var(--text2); font-weight: 500; }
+.alert-card-race  { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.alert-card-time  { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.alert-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #EF9F27; display: inline-block;
+  animation: alertPulse 1.3s ease-in-out infinite;
+}
+.alert-dot.urgent { background: #E24B4A; }
+@keyframes alertPulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+/* TOAST */
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: .625rem 1.25rem; font-size: 13px; transition: transform .3s ease; z-index: 200; pointer-events: none; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── SIM MODAL ── */
+#sim-modal-overlay {
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(6,15,30,0.78); backdrop-filter:blur(3px);
+  align-items:flex-end; justify-content:center;
+}
+#sim-modal-overlay.open { display:flex; }
+#sim-modal {
+  background:#f6f8fb; border-radius:16px 16px 0 0;
+  width:100%; max-width:640px; max-height:92vh;
+  overflow-y:auto; box-shadow:0 -8px 32px rgba(0,40,90,0.25);
+  animation:simSlideUp 0.28s cubic-bezier(.22,.68,0,1.2);
+}
+@keyframes simSlideUp {
+  from { transform:translateY(60px); opacity:0; }
+  to   { transform:translateY(0);    opacity:1; }
+}
+#sim-modal-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px 10px;
+  border-bottom:1px solid rgba(0,40,90,0.12);
+  background:#fff; position:sticky; top:0; z-index:2;
+  border-radius:16px 16px 0 0;
+}
+#sim-modal-header h3 { font-size:14px; font-weight:700; color:#0b1220; margin:0; }
+#sim-modal-close {
+  width:28px; height:28px; border-radius:50%;
+  background:#f0f5ff; border:none; cursor:pointer;
+  font-size:16px; color:#28324a;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.sim-canvas-wrap {
+  background:#fff; margin:12px; border-radius:10px;
+  border:1px solid rgba(0,40,90,0.1); overflow:hidden;
+}
+#sim-canvas { display:block; width:100%; }
+.sim-inner-label {
+  font-size:10px; font-weight:700; letter-spacing:.12em;
+  color:#515f7a; text-transform:uppercase; padding:8px 12px 4px;
+}
+.sim-legend {
+  display:flex; flex-wrap:wrap; gap:6px 14px;
+  padding:4px 12px 10px; font-size:11px; color:#28324a;
+}
+.sim-legend-item { display:flex; align-items:center; gap:5px; }
+.sim-legend-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.sim-patterns    { padding:0 12px 4px; }
+.sim-patterns h4 {
+  font-size:10px; font-weight:700; letter-spacing:.12em;
+  color:#515f7a; text-transform:uppercase; margin-bottom:8px;
+}
+.sim-pat-row {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:6px;
+  background:#fff; border:1px solid rgba(0,40,90,0.1);
+  border-left:3px solid transparent; margin-bottom:6px;
+}
+.sim-pat-no   { font-size:10px; color:#515f7a; min-width:16px; }
+.sim-pat-boats { display:flex; align-items:center; gap:2px; min-width:76px; }
+.sim-pat-desc  { font-size:11px; color:#28324a; flex:1; line-height:1.5; }
+.sim-pat-prob  { font-size:12px; font-weight:700; color:#0066ff; min-width:36px; text-align:right; }
+.sim-resim-btn {
+  display:block; width:calc(100% - 24px); margin:8px 12px 16px;
+  padding:11px; background:#0066ff;
+  border:none; border-radius:8px;
+  color:#fff; font-size:13px; font-weight:700;
+  cursor:pointer; letter-spacing:0.05em; transition:background 0.15s;
+}
+.sim-resim-btn:hover { background:#1a7dff; }
+
+/* DATE NAVIGATOR */
+.date-nav { display: flex; align-items: center; gap: 3px; }
+.date-nav-btn { width: 20px; height: 20px; border-radius: 50%; background: var(--bg3); color: var(--accent); border: 1px solid var(--border2); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; padding: 0; line-height: 1; flex-shrink: 0; }
+.date-nav-btn:hover { background: var(--bg4); }
+.date-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.date-nav-label { font-size: 11px; color: var(--text2); font-weight: 500; white-space: nowrap; }
+
+#buy-panel, #comment-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.25rem; box-shadow: 0 6px 18px rgba(0,40,90,0.08); }
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 600px) {
+  .nav-inner { padding-left: 0.5rem; padding-right: 0.5rem; }
+  html { font-size: 14px; }
+
+  .container { padding: 0.75rem 0.5rem; }
+
+  /* 確率テーブルをスマホ幅に収める */
+  .prob-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .prob-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .prob-table th, .prob-table td { padding: 4px 4px !important; white-space: nowrap; }
+  .prob-table .col-name { width: 6em; min-width: 6em; max-width: 8em; overflow: hidden; text-overflow: clip; white-space: nowrap; text-align: center; }
+
+  /* ヘッダタイトル・バッジ行 */
+  .status-badges { display: flex; flex-wrap: wrap; gap: 4px; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); }
+  .status-badges > span { font-size: 10px !important; }
+
+  /* シナリオバー */
+  .scenario-header { padding: 0.6rem 0.75rem !important; gap: 6px !important; }
+  .scenario-header .scenario-bar { font-size: 12px !important; padding: 4px 8px !important; }
+  .scenario-header .mode-desc { font-size: 11px !important; }
+
+  /* 3連単グリッドをシングルカラムに */
+  .buy3-inner { grid-template-columns: 1fr !important; }
+
+  /* buy-card */
+  .buy-card { padding: 0.625rem 0.75rem; }
+  .buy-combo { font-size: 14px !important; letter-spacing: 1px !important; }
+  .buy-grid { padding: 0.75rem !important; gap: 8px !important; }
+
+  /* detail panel */
+  .bt-head-simple, .bt-row { padding: 0.4rem 0.75rem !important; }
+  .bt-row { font-size: 12px; }
+}
+
+/* ── TOP PAGE ── */
+.logo { cursor: pointer; }
+.logo:hover { opacity: 0.8; }
+
+#top-page {
+  display: none;
+  padding: 0 1rem 3rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.top-hero {
+  padding: 1.6rem 0 1.4rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.4rem;
+}
+.top-hero-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  font-family: var(--mono);
+}
+.top-hero-title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  margin-bottom: 0.7rem;
+}
+.top-hero-sub {
+  font-size: 0.78rem;
+  color: var(--text3);
+  letter-spacing: .04em;
+}
+
+.top-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.top-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ナビゲーションカード */
+.top-nav-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+.top-nav-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.25rem 1.1rem;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .12s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,40,90,0.06);
+  text-decoration: none;
+  color: inherit;
+}
+.top-nav-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 20px rgba(0,102,255,0.13);
+  transform: translateY(-2px);
+}
+.top-nav-card:active { transform: translateY(0); }
+
+.top-nav-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.top-nav-card-icon.blue  { background: rgba(0,102,255,.12); }
+.top-nav-card-icon.green { background: rgba(0,184,107,.12); }
+.top-nav-card-icon.gold  { background: rgba(255,179,0,.15); }
+.top-nav-card-icon.red   { background: rgba(255,59,59,.10); }
+.top-nav-card-icon.gray  { background: var(--bg4); }
+
+.top-nav-card-body { flex: 1; min-width: 0; }
+.top-nav-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.top-nav-card-desc {
+  font-size: 0.78rem;
+  color: var(--text3);
+  line-height: 1.5;
+}
+.top-nav-card-arrow {
+  font-size: 18px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.top-nav-card:hover .top-nav-card-arrow { color: var(--accent); }
+
+/* 本日開催バッジ */
+.top-venues-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+.top-venues-row::-webkit-scrollbar { display: none; }
+.top-venue-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  padding: 6px 4px 6px;
+  width: 68px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  flex-shrink: 0;
+}
+.top-venue-chip:hover {
+  border-color: var(--accent);
+  background: var(--bg3);
+}
+.top-venue-chip:hover .chip-name { color: var(--accent); }
+/* バッジ行: 複数バッジを横並び */
+.chip-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex-wrap: nowrap;
+  min-height: 16px;
+}
+.chip-top-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.chip-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text1);
+  white-space: nowrap;
+  transition: color .15s;
+}
+/* グレードバッジ */
+.chip-grade {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: .03em;
+  flex-shrink: 0;
+}
+.chip-grade.cg-sg {background: #ef4444; /* 赤 */color: #fff;}
+.chip-grade.cg-g1 {background: #eab308; /* 黄 */color: #fff;}
+.chip-grade.cg-g2 {background: #65a30d; /* 緑 */color: #fff;}
+.chip-grade.cg-g3 {background: #2563eb; /* 青 */color: #fff;}
+.chip-grade.cg-ippan  { background: var(--bg4); color: var(--text3); }
+.chip-grade.cg-joshi  { background: #db2777; color: #fff; }
+/* ── TOP ALERT STRIP ── */
+#top-alert-strip {
+  margin-bottom: 1.25rem;
+  display: none;
+}
+.top-alert-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .09em;
+  color: #854F0B; text-transform: uppercase;
+  margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
+}
+.top-alert-cards {
+  display: flex; gap: 6px; overflow-x: auto;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.top-alert-cards::-webkit-scrollbar { display: none; }
+
+.top-nav-card-icon.blue  { background: rgba(0,102,255,.12); }
+.top-venue-chip .chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.chip-day {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  white-space: nowrap;
+  line-height: 1;
+}
+.vtab-day {
+  display: block;
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--text3);
+  line-height: 1;
+  margin-top: 1px;
+  text-align: center;
+}
+
+/* 本日の注目レース */
+.top-info-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  font-size: 0.82rem;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) {
+  .top-hero-title { font-size: 2rem; }
+  .top-nav-card { padding: 1rem; }
+  .top-nav-card-icon { width: 40px; height: 40px; font-size: 18px; border-radius: 10px; }
+}
+
+/* ── AI予想成績カード ── */
+#top-ai-stats {
+  margin-bottom: 2rem;
+}
+.ai-stats-card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,40,90,0.06);
+  margin-bottom: 0.75rem;
+}
+.ai-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+}
+.ai-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.ai-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--text);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ai-stat-value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text);
+  line-height: 1.2;
+}
+.ai-stat-value.hit   { color: var(--green); }
+.ai-stat-value.over  { color: var(--green); }
+.ai-stat-value.under { color: var(--text); }
+.ai-stat-value.warn  { color: var(--orange); }
+.ai-stat-sub {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+.ai-stats-note {
+  font-size: 11px;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+  margin-top: 0.1rem;
+  line-height: 1.6;
+}
+.ai-stats-detail-rows {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.ai-stats-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+}
+.ai-stats-detail-row:last-child { border-bottom: none; }
+.ai-stats-detail-venue { min-width: 4em; font-weight: 700; flex-shrink: 0; }
+.ai-stats-detail-race  { min-width: 2.5em; color: var(--text3); flex-shrink: 0; }
+.ai-stats-detail-combo { font-family: var(--mono); flex: 1; color: var(--text3); font-size: 10px; }
+.ai-stats-detail-hit   { color: var(--green); font-weight: 700; flex-shrink: 0; }
+.ai-stats-detail-miss  { color: var(--text3); flex-shrink: 0; }
+.ai-stats-detail-odds  { font-family: var(--mono); font-size: 11px; color: var(--red); font-weight: 600; flex-shrink: 0; }
+.ai-stats-excluded-note {
+  font-size: 11px;
+  color: var(--orange);
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(255,122,0,0.07);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,122,0,0.18);
+}
+/* 会場別内訳 */
+.ai-venue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* 会場 details */
+.ai-venue-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.ai-venue-summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.45rem 0.85rem;
+  background: var(--bg3);
+  cursor: pointer;
+  list-style: none;
+  flex-wrap: wrap;
+}
+.ai-venue-summary::-webkit-details-marker { display: none; }
+.ai-venue-summary-arrow {
+  font-size: 9px;
+  color: var(--text3);
+  transition: transform .15s;
+  flex-shrink: 0;
+}
+.ai-venue-details[open] > .ai-venue-summary .ai-venue-summary-arrow { transform: rotate(90deg); }
+/* レース details リスト */
+.ai-venue-race-list {
+  padding: 0.3rem 0.5rem 0.3rem 1.1rem;
+  background: var(--bg2);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+/* レース details */
+.ai-race-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.ai-race-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--bg2);
+  cursor: pointer;
+  list-style: none;
+  font-size: 11px;
+}
+.ai-race-summary::-webkit-details-marker { display: none; }
+.ai-race-summary-arrow {
+  font-size: 8px;
+  color: var(--text3);
+  transition: transform .15s;
+  flex-shrink: 0;
+}
+.ai-race-details[open] > .ai-race-summary { background: var(--bg3); }
+.ai-race-details[open] > .ai-race-summary .ai-race-summary-arrow { transform: rotate(90deg); }
+.ai-race-body {
+  padding: 5px 10px 5px 14px;
+  font-size: 11px;
+  color: var(--text2);
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  line-height: 1.8;
+}
+.ai-race-body-label { color: var(--text3); margin-right: 4px; }
+.ai-race-body-val   { font-family: var(--mono); font-weight: 600; }
+.ai-venue-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 4em;
+  flex-shrink: 0;
+}
+.ai-venue-stat {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.ai-venue-stat-label {
+  color: var(--text3);
+  font-size: 10px;
+}
+.ai-venue-stat-val {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--text);
+}
+.ai-venue-stat-val.hit   { color: var(--green); }
+.ai-venue-stat-val.over  { color: var(--green); }
+.ai-venue-stat-val.under { color: var(--text); }
+.ai-venue-stat-val.warn  { color: var(--orange); }
+.ai-venue-stat-sub {
+  color: var(--text3);
+  font-size: 10px;
+}
+.ai-venue-races {
+  padding: 0.3rem 0.5rem 0.3rem 0.85rem;
+  background: var(--bg2);
+}
+.ai-venue-race-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
+.ai-venue-race-row:last-child { border-bottom: none; }
+.ai-venue-race-no  { min-width: 2.5em; color: var(--text3); flex-shrink: 0; font-family: var(--mono); }
+.ai-venue-race-cnt { font-family: var(--mono); color: var(--text3); font-size: 10px; flex-shrink: 0; min-width: 2.5em; }
+.ai-venue-race-hit  { color: var(--green); font-weight: 700; flex-shrink: 0; }
+.ai-venue-race-miss { color: var(--text3); flex-shrink: 0; }
+.ai-venue-race-odds { font-family: var(--mono); font-size: 11px; color: var(--red); font-weight: 600; flex-shrink: 0; margin-left: 2px; }
+@media (max-width: 600px) {
+  .ai-stat-value { font-size: 1.2rem; }
+}
+
+/* ====================================================
+   条件攻略サイト 追加スタイル（ベースCSSのトークンを継承）
+   ==================================================== */
+
+/* 会場タブ：未公開会場 */
+.vtab.soon { opacity: 0.42; cursor: default; }
+.vtab.soon:hover { color: var(--text3); }
+
+/* 会場コンテンツの切り替え */
+.venue-content { display: none; }
+.venue-content.active { display: block; }
+
+/* ページヒーロー（会場別） */
+.venue-hero {
+  padding: 1.4rem 0 1.2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.1rem;
+}
+.venue-hero-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: .22em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: .5rem; font-family: var(--mono);
+}
+.venue-hero-title {
+  font-size: 1.9rem; font-weight: 700; color: var(--text);
+  line-height: 1.1; letter-spacing: -.01em; margin-bottom: .5rem;
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.venue-hero-title small { font-size: .95rem; font-weight: 500; color: var(--text3); }
+.venue-hero-sub { font-size: .78rem; color: var(--text3); line-height: 1.7; }
+.venue-hero-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: .7rem; }
+.vh-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  background: var(--bg3); color: var(--text2); border: 1px solid var(--border);
+}
+.vh-badge.accent { background: rgba(0,102,255,.1); color: var(--accent2); border-color: rgba(0,102,255,.25); }
+
+/* サブタブ（会場サマリー／気象／決まり手／レース番号） */
+.subtab-panel { display: none; }
+.subtab-panel.active { display: block; }
+
+/* サマリー：基本指標グリッド */
+.stat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  margin-bottom: 1.1rem;
+}
+@media (max-width: 600px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .8rem .9rem; box-shadow: 0 2px 8px rgba(0,40,90,0.05);
+}
+.stat-card-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .07em; color: var(--text3);
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.stat-card-value { font-size: 1.3rem; font-weight: 700; font-family: var(--mono); color: var(--text); line-height: 1.15; }
+.stat-card-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.stat-card-value.accent { color: var(--accent2); }
+
+/* コース別1着率バー */
+.course-bar-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.course-bar-row:last-child { border-bottom: none; }
+.course-bar-track { flex: 1; height: 9px; background: var(--bg4); border-radius: 5px; overflow: hidden; }
+.course-bar-fill { height: 100%; border-radius: 5px; }
+.course-bar-pct { font-family: var(--mono); font-size: .8rem; font-weight: 700; color: var(--text); min-width: 3.6em; text-align: right; }
+.course-bar-diff { font-size: 10px; min-width: 3.6em; text-align: right; font-family: var(--mono); }
+.course-bar-diff.up { color: var(--green); }
+.course-bar-diff.down { color: var(--red); }
+
+/* 決まり手内訳バー（横並び積み上げ） */
+.kimarite-stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+.kimarite-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; }
+.kimarite-legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 11px; color: var(--text2); }
+.kimarite-legend-item { display: flex; align-items: center; gap: 5px; }
+.kimarite-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+
+/* セクション見出し */
+.section-heading {
+  display: flex; align-items: center; gap: 8px; margin: 1.4rem 0 .8rem;
+  font-size: .8rem; font-weight: 700; color: var(--text2); letter-spacing: .04em;
+}
+.section-heading:first-child { margin-top: 0; }
+.section-heading::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-heading-note { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0; }
+
+/* ルールカード（条件攻略の核） */
+.rule-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.1rem; margin-bottom: .9rem; box-shadow: 0 6px 18px rgba(0,40,90,0.06);
+}
+.rule-card-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: .55rem; }
+.rule-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: .02em; flex-shrink: 0; }
+.rule-tag.weather  { background: rgba(0,102,255,.12); color: var(--accent2); }
+.rule-tag.kimarite { background: rgba(226,104,10,.13); color: var(--orange); }
+.rule-tag.raceno   { background: rgba(0,184,107,.13); color: var(--green); }
+.rule-no { font-family: var(--mono); font-size: 11px; color: var(--text3); flex-shrink: 0; }
+.rule-title { font-size: .92rem; font-weight: 700; color: var(--text); flex: 1; min-width: 140px; }
+.rule-reliability { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; white-space: nowrap; }
+.rule-reliability.high { background: var(--green2); color: var(--green); }
+.rule-reliability.mid  { background: var(--orange2); color: var(--orange); }
+.rule-reliability.low  { background: var(--bg4); color: var(--text3); }
+.rule-desc { font-size: .82rem; color: var(--text2); line-height: 1.75; margin-bottom: .7rem; }
+.rule-desc .num { font-family: var(--mono); font-weight: 700; color: var(--text); }
+
+.rule-dist { display: flex; flex-direction: column; gap: 5px; margin-bottom: .8rem; }
+.rule-dist-row { display: flex; align-items: center; gap: 8px; }
+.rule-dist-track { flex: 1; height: 16px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
+.rule-dist-fill { height: 100%; display: flex; align-items: center; }
+.rule-dist-val { font-family: var(--mono); font-size: .76rem; font-weight: 700; color: var(--text); min-width: 3.4em; text-align: right; }
+
+.rule-stats { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: .8rem; }
+.rule-stat { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .35rem .65rem; font-size: .73rem; color: var(--text2); }
+.rule-stat b { font-family: var(--mono); color: var(--text); font-size: .82rem; }
+
+.rule-buy { border-top: 1px dashed var(--border); padding-top: .7rem; display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.rule-buy-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; padding-top: 3px; flex-shrink: 0; }
+.rule-buy-combos { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+.combo-chip {
+  display: inline-flex; align-items: center; gap: 2px; font-family: var(--mono); font-weight: 700;
+  font-size: .82rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 3px 8px;
+}
+.combo-chip .arrow { color: var(--text3); font-size: .68rem; margin: 0 1px; }
+.combo-chip .boat-circle { width: 18px; height: 18px; font-size: 9.5px; }
+
+/* レース番号傾向：荒れスコアの帯 */
+.raceno-strip { display: flex; gap: 4px; margin-bottom: 1rem; }
+.raceno-cell {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px 2px; border-radius: 6px; border: 1px solid var(--border);
+}
+.raceno-cell-no { font-size: 10px; color: var(--text3); font-weight: 700; }
+.raceno-cell-val { font-family: var(--mono); font-size: .72rem; font-weight: 700; }
+
+/* 免責ノート */
+.disclaimer-box {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .9rem 1.1rem; font-size: 11px; color: var(--text3); line-height: 1.8; margin-top: 1.5rem;
+}
+.disclaimer-box strong { color: var(--text2); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-icon">🚤</span>BRC攻略データベース</div>
+    <div class="header-right">
+      <div class="header-meta-area">
+        <div class="header-meta"><strong>住之江</strong>｜条件攻略（パイロット版）</div>
+        <div class="header-meta">データ最終更新 2026-06-25</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="sticky-nav-venue">
+  <div class="nav-inner">
+    <div id="venue-tabs">
+      <button class="vtab soon" onclick="showToast('桐生は近日公開予定です')">桐生</button>
+      <button class="vtab soon" onclick="showToast('戸田は近日公開予定です')">戸田</button>
+      <button class="vtab soon" onclick="showToast('江戸川は近日公開予定です')">江戸川</button>
+      <button class="vtab soon" onclick="showToast('平和島は近日公開予定です')">平和島</button>
+      <button class="vtab soon" onclick="showToast('多摩川は近日公開予定です')">多摩川</button>
+      <button class="vtab soon" onclick="showToast('浜名湖は近日公開予定です')">浜名湖</button>
+      <button class="vtab loaded" id="vtab-gamagori" onclick="switchVenue('gamagori')">蒲郡</button>
+      <button class="vtab loaded" id="vtab-tokoname" onclick="switchVenue('tokoname')">常滑</button>
+      <button class="vtab soon" onclick="showToast('津は近日公開予定です')">津</button>
+      <button class="vtab soon" onclick="showToast('三国は近日公開予定です')">三国</button>
+      <button class="vtab soon" onclick="showToast('びわこは近日公開予定です')">びわこ</button>
+      <button class="vtab loaded active" id="vtab-suminoe" onclick="switchVenue('suminoe')">住之江</button>
+      <button class="vtab soon" onclick="showToast('尼崎は近日公開予定です')">尼崎</button>
+      <button class="vtab soon" onclick="showToast('鳴門は近日公開予定です')">鳴門</button>
+      <button class="vtab soon" onclick="showToast('丸亀は近日公開予定です')">丸亀</button>
+      <button class="vtab soon" onclick="showToast('児島は近日公開予定です')">児島</button>
+      <button class="vtab soon" onclick="showToast('宮島は近日公開予定です')">宮島</button>
+      <button class="vtab soon" onclick="showToast('徳山は近日公開予定です')">徳山</button>
+      <button class="vtab soon" onclick="showToast('下関は近日公開予定です')">下関</button>
+      <button class="vtab soon" onclick="showToast('若松は近日公開予定です')">若松</button>
+      <button class="vtab soon" onclick="showToast('芦屋は近日公開予定です')">芦屋</button>
+      <button class="vtab soon" onclick="showToast('福岡は近日公開予定です')">福岡</button>
+      <button class="vtab soon" onclick="showToast('唐津は近日公開予定です')">唐津</button>
+      <button class="vtab soon" onclick="showToast('大村は近日公開予定です')">大村</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="venue-content active" id="venue-content-suminoe">
+  <div class="venue-hero">
+    <div class="venue-hero-eyebrow">SUMINOE ／ COURSE STRATEGY PILOT</div>
+    <div class="venue-hero-title">住之江 <small>条件攻略</small></div>
+    <div class="venue-hero-sub">
+      集計期間：気象データ 2023-01-01〜2026-05-31（n=6,305）／ 会場基本統計・展開データ 直近1年 2025-05-31〜2026-05-31（n=1,944）<br>
+      「この条件が揃うと、この舟券の組み方で的中率が上がりやすい」という過去データ上の傾向を、条件ごとにカード化しています。
+    </div>
+    <div class="venue-hero-badges">
+      <span class="vh-badge accent">イン逃げ率 55%（全国+2pt）</span>
+      <span class="vh-badge">荒れスコア 45</span>
+      <span class="vh-badge">条件ルール 14件（選手指数連動4件含む）</span>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('summary-suminoe', this)">会場サマリー</button>
+    <button class="tab-btn" onclick="showTab('weather-suminoe', this)">気象条件攻略</button>
+    <button class="tab-btn" onclick="showTab('kimarite-suminoe', this)">決まり手・進入替わり攻略</button>
+    <button class="tab-btn" onclick="showTab('raceno-suminoe', this)">レース番号傾向</button>
+    <button class="tab-btn" onclick="showTab('scouting-suminoe', this)">1号艇診断</button>
+  </div>
+
+
+  <!-- ============ TAB 1: 会場サマリー ============ -->
+  <div id="tab-summary-suminoe" class="subtab-panel active">
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card-label">レース数（直近1年）</div>
+        <div class="stat-card-value">1,944</div>
+        <div class="stat-card-sub">2025-05-31〜2026-05-31</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">イン逃げ率</div>
+        <div class="stat-card-value accent">55%</div>
+        <div class="stat-card-sub">全国平均比 +2pt</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">荒れスコア</div>
+        <div class="stat-card-value">45</div>
+        <div class="stat-card-sub">全国中位〜やや堅め</div>
+      </div>
+    </div>
+
+    <div class="section-heading">コース別1着率（全国平均比）</div>
+    <div class="detail-panel">
+      <div style="padding:1rem 1.25rem;">
+        <div class="course-bar-row">
+          <span class="boat-circle b1">1</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:57%;background:#94a3b8;"></div></div>
+          <span class="course-bar-pct">57%</span>
+          <span class="course-bar-diff up">+2pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b2">2</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:14%;background:#000;"></div></div>
+          <span class="course-bar-pct">14%</span>
+          <span class="course-bar-diff down">0pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b3">3</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:12%;background:#e60012;"></div></div>
+          <span class="course-bar-pct">12%</span>
+          <span class="course-bar-diff down">-2pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b4">4</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:10%;background:#0066cc;"></div></div>
+          <span class="course-bar-pct">10%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b5">5</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:6%;background:#ffcc00;"></div></div>
+          <span class="course-bar-pct">6%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b6">6</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:1%;background:#00a651;"></div></div>
+          <span class="course-bar-pct">1%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading">決まり手内訳</div>
+    <div class="detail-panel">
+      <div style="padding:1rem 1.25rem;">
+        <div class="kimarite-stack">
+          <div class="kimarite-seg" style="width:55%;background:var(--accent2);">逃げ 55%</div>
+          <div class="kimarite-seg" style="width:12%;background:var(--green);">差し 12%</div>
+          <div class="kimarite-seg" style="width:16%;background:var(--red);">まくり 16%</div>
+          <div class="kimarite-seg" style="width:11%;background:var(--orange);">まくり差し 11%</div>
+          <div class="kimarite-seg" style="width:6%;background:var(--text3);">抜き 6%</div>
+        </div>
+        <div class="kimarite-legend">
+          <div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--accent2);"></span>逃げ 55%</div>
+          <div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--green);"></span>差し 12%</div>
+          <div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--red);"></span>まくり 16%</div>
+          <div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--orange);"></span>まくり差し 11%</div>
+          <div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--text3);"></span>抜き 6%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>このページの見方</strong>：以下の「気象条件攻略」「決まり手・進入替わり攻略」「レース番号傾向」タブは、住之江の過去データから抽出した条件付き傾向をカード化したものです。各カードの右上バッジは元データのサンプル数（n）に基づく信頼度の目安（高＝概ねn≥100、中＝n50〜99、低＝n50未満で参考程度）です。
+    </div>
+  </div>
+
+  <!-- ============ TAB 2: 気象条件攻略 ============ -->
+  <div id="tab-weather-suminoe" class="subtab-panel">
+
+    <div class="section-heading">気象条件 × コース成績<span class="section-heading-note">気象統計マスタ／気象×コース統計（n=6,305・2023-01-01〜2026-05-31）</span></div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-1</span>
+        <span class="rule-tag weather">気象・風速</span>
+        <span class="rule-title">無風〜微風（風速0〜2m）はイン信頼度が跳ね上がる</span>
+        <span class="rule-reliability high">信頼度：高（n=4,770）</span>
+      </div>
+      <div class="rule-desc">
+        風速0m〜2mの3区分は<span class="num">60〜62%</span>でイン1着率が並び、全体平均<span class="num">60%</span>を上回る。風速3m以降は明確に低下し、4mで<span class="num">50%</span>まで落ちる。「無風〜2m」は住之江でイン信頼度が最も高いレンジ。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">0m：<b>62%</b>（n=2,336）</span>
+        <span class="rule-stat">1m：<b>62%</b>（n=813）</span>
+        <span class="rule-stat">2m：<b>60%</b>（n=1,621）</span>
+        <span class="rule-stat">全体：<b>60%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip"><span class="boat-circle b1">1</span><span class="arrow">固定</span>本線：2連単 1→流し／3連単 1-2-3・1-3-2・1-2-4・1-4-2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-2</span>
+        <span class="rule-tag weather">気象・風速</span>
+        <span class="rule-title">向かい風3m以上でイン崩れ、2号艇の差しが伸びる</span>
+        <span class="rule-reliability mid">信頼度：中（n=991）</span>
+      </div>
+      <div class="rule-desc">
+        風速4m（n=468）でイン1着率<span class="num">50%</span>、5m（n=180）で<span class="num">52%</span>まで低下。同時に差し率は3mの<span class="num">13%</span>から4mで<span class="num">18%</span>、5mで<span class="num">21%</span>まで上昇。風が強まるほど2号艇（差し）の出番が増える。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">3m 差し：<b>13%</b></span>
+        <span class="rule-stat">4m 差し：<b>18%</b></span>
+        <span class="rule-stat">5m 差し：<b>21%</b></span>
+        <span class="rule-stat">4m イン：<b>50%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">2連単 <span class="boat-circle b1">1</span><span class="arrow">-</span><span class="boat-circle b2">2</span> ／ <span class="boat-circle b2">2</span><span class="arrow">-</span><span class="boat-circle b1">1</span> の両面を厚めに</span>
+          <span class="combo-chip">3連複 <span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span> ボックス</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-3</span>
+        <span class="rule-tag weather">気象・波高</span>
+        <span class="rule-title">波高2cm以上は明確な荒れサイン</span>
+        <span class="rule-reliability high">信頼度：高（n=648）</span>
+      </div>
+      <div class="rule-desc">
+        波高1cm時のイン1着率<span class="num">61%</span>に対し、2cmになると<span class="num">51%</span>まで急落（-10pt）。差し<span class="num">18%</span>・まくり差し<span class="num">16%</span>とも上昇し、決まり手が分散する典型的な荒れ模様。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">1cm イン：<b>61%</b>（n=5,581）</span>
+        <span class="rule-stat">2cm イン：<b>51%</b>（n=648）</span>
+        <span class="rule-stat">2cm 差し：<b>18%</b></span>
+        <span class="rule-stat">2cm まくり差し：<b>16%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">1点軸を避け、3連複 <span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span> フォーメーション（軸なしワイド運用）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-4</span>
+        <span class="rule-tag weather">気象・天候</span>
+        <span class="rule-title">雨天時は差しの伸びが平常時より明確</span>
+        <span class="rule-reliability high">信頼度：高（n=578）</span>
+      </div>
+      <div class="rule-desc">
+        雨天時の差し率は<span class="num">17%</span>で、晴天時<span class="num">11%</span>・曇天時<span class="num">13%</span>より明確に高い。イン1着率も<span class="num">58%</span>とやや低下（晴天60%）。雨天は2号艇残しを意識した組み方が有効。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">雨 差し：<b>17%</b></span>
+        <span class="rule-stat">晴 差し：<b>11%</b></span>
+        <span class="rule-stat">雨 イン：<b>58%</b></span>
+        <span class="rule-stat">晴 イン：<b>60%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連単 <span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-流し（2着固定で3着を広げる）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-5</span>
+        <span class="rule-tag weather">気象・風向</span>
+        <span class="rule-title">南系の風（向かい風）でまくり率が最大化</span>
+        <span class="rule-reliability high">信頼度：高（n=951）</span>
+      </div>
+      <div class="rule-desc">
+        住之江の1コース直走路は北向き。南風時はイン1着率<span class="num">53%</span>まで下がり、まくり率は全風向中最大の<span class="num">20%</span>に上昇。逆に北東風はイン1着率<span class="num">63%</span>と最も堅くなる。風向の確認だけで「堅い日」「荒れる日」の当たりがつく。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">南風 イン：<b>53%</b></span>
+        <span class="rule-stat">南風 まくり：<b>20%</b></span>
+        <span class="rule-stat">北東風 イン：<b>63%</b></span>
+        <span class="rule-stat">無風 イン：<b>62%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">南風：3連単 <span class="boat-circle b3">3</span>-<span class="boat-circle b1">1</span>-流し／<span class="boat-circle b1">1</span>-<span class="boat-circle b3">3</span>-流し</span>
+          <span class="combo-chip">北東風：<span class="boat-circle b1">1</span>固定の手広い流し</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ TAB 3: 決まり手・進入替わり攻略 ============ -->
+  <div id="tab-kimarite-suminoe" class="subtab-panel">
+
+    <div class="section-heading">決まり手別・展開別残存傾向<span class="section-heading-note">展開別残存_会場別／イン逃げ分析（直近1年）</span></div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-1</span>
+        <span class="rule-tag kimarite">イン逃げ成立時</span>
+        <span class="rule-title">1号艇が逃げ切った後は2号艇・3号艇がほぼ拮抗</span>
+        <span class="rule-reliability high">信頼度：最高（n=1,063）</span>
+      </div>
+      <div class="rule-desc">
+        1号艇が逃げで1着になったレース（n=1,063）の相手筋は、2着率で2号艇<span class="num">32%</span>・3号艇<span class="num">31%</span>とほぼ横並び。3着以内率では3号艇<span class="num">57%</span>が2号艇<span class="num">55%</span>をわずかに上回る。
+      </div>
+      <div class="rule-dist">
+        <div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:32%;background:#000;"></div></div><span class="rule-dist-val">32%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:31%;background:#e60012;"></div></div><span class="rule-dist-val">31%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:19%;background:#0066cc;"></div></div><span class="rule-dist-val">19%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:10%;background:#ffcc00;"></div></div><span class="rule-dist-val">10%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b6">6</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:7%;background:#00a651;"></div></div><span class="rule-dist-val">7%</span></div>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連単 <span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-<span class="boat-circle b3">3</span> ／ <span class="boat-circle b1">1</span>-<span class="boat-circle b3">3</span>-<span class="boat-circle b2">2</span> 本線＋<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-<span class="boat-circle b4">4</span>／<span class="boat-circle b1">1</span>-<span class="boat-circle b4">4</span>-<span class="boat-circle b2">2</span> を厚めに</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-2</span>
+        <span class="rule-tag kimarite">2号艇 差し成立時</span>
+        <span class="rule-title">2号艇が差した後は1号艇の巻き返しが圧倒的</span>
+        <span class="rule-reliability high">信頼度：高（n=159・信頼度A）</span>
+      </div>
+      <div class="rule-desc">
+        1着が2号艇（差し）だったレースでは、2着に1号艇が入る割合が<span class="num">63%</span>と突出。3連対率も<span class="num">79%</span>に達し、住之江の中でも最も再現性の高いパターンの一つ。
+      </div>
+      <div class="rule-dist">
+        <div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:63%;background:#94a3b8;"></div></div><span class="rule-dist-val">63%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:18%;background:#0066cc;"></div></div><span class="rule-dist-val">18%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:9%;background:#e60012;"></div></div><span class="rule-dist-val">9%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:6%;background:#ffcc00;"></div></div><span class="rule-dist-val">6%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b6">6</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:4%;background:#00a651;"></div></div><span class="rule-dist-val">4%</span></div>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">2連単 <span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span> を厚く／2連複 <span class="boat-circle b1">1</span><span class="boat-circle b2">2</span></span>
+          <span class="combo-chip">3連単 <span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>-<span class="boat-circle b4">4</span>／<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>-<span class="boat-circle b3">3</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-3</span>
+        <span class="rule-tag kimarite">3号艇 まくり成立時</span>
+        <span class="rule-title">3号艇まくりの後は1号艇・4号艇が拮抗、3着内は2号艇残しが有効</span>
+        <span class="rule-reliability mid">信頼度：中（n=99）</span>
+      </div>
+      <div class="rule-desc">
+        1着が3号艇（まくり）のレースでは、2着率は1号艇<span class="num">28%</span>・4号艇<span class="num">29%</span>とほぼ互角。一方、3着以内率では2号艇が<span class="num">47%</span>と最も高く、隊列の外側だけでなく2号艇の残存も見逃せない。
+      </div>
+      <div class="rule-dist">
+        <div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:29%;background:#0066cc;"></div></div><span class="rule-dist-val">29%（2着）</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:28%;background:#94a3b8;"></div></div><span class="rule-dist-val">28%（2着）</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:47%;background:#000;"></div></div><span class="rule-dist-val">47%（3着以内）</span></div>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連複 <span class="boat-circle b3">3</span><span class="boat-circle b1">1</span><span class="boat-circle b4">4</span>／<span class="boat-circle b3">3</span><span class="boat-circle b2">2</span><span class="boat-circle b4">4</span> ボックス</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-4</span>
+        <span class="rule-tag kimarite">4号艇 まくり成立時</span>
+        <span class="rule-title">4号艇まくりの後は5号艇の巻き返しが最多</span>
+        <span class="rule-reliability high">信頼度：高（n=104・信頼度A）</span>
+      </div>
+      <div class="rule-desc">
+        1着が4号艇（まくり）のレースでは、2着率は5号艇が<span class="num">35%</span>で全艇中最多。1号艇<span class="num">20%</span>・2号艇<span class="num">19%</span>を上回る。3着以内率でも5号艇<span class="num">57%</span>が最高で、4カドまくり時は「外から差してくる5号艇」を軽視できない。
+      </div>
+      <div class="rule-dist">
+        <div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:35%;background:#ffcc00;"></div></div><span class="rule-dist-val">35%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:20%;background:#94a3b8;"></div></div><span class="rule-dist-val">20%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:19%;background:#000;"></div></div><span class="rule-dist-val">19%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b6">6</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:18%;background:#00a651;"></div></div><span class="rule-dist-val">18%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:8%;background:#e60012;"></div></div><span class="rule-dist-val">8%</span></div>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連単 <span class="boat-circle b4">4</span>-<span class="boat-circle b5">5</span>-流し／<span class="boat-circle b4">4</span>-<span class="boat-circle b1">1</span>-流し</span>
+          <span class="combo-chip">2連複 <span class="boat-circle b4">4</span><span class="boat-circle b5">5</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ TAB 4: レース番号傾向 ============ -->
+  <div id="tab-raceno-suminoe" class="subtab-panel">
+
+    <div class="section-heading">レース番号別 荒れスコア（1R〜12R）<span class="section-heading-note">会場統計（直近1年 n=1,944）</span></div>
+    <div class="raceno-strip">
+      <div class="raceno-cell" style="background:rgba(255,90,90,.10);border-color:rgba(255,90,90,.3);"><div class="raceno-cell-no">1R</div><div class="raceno-cell-val" style="color:var(--red);">44</div></div>
+      <div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">2R</div><div class="raceno-cell-val" style="color:var(--red);">54</div></div>
+      <div class="raceno-cell" style="background:rgba(255,90,90,.16);border-color:rgba(255,90,90,.4);"><div class="raceno-cell-no">3R</div><div class="raceno-cell-val" style="color:var(--red);">55</div></div>
+      <div class="raceno-cell" style="background:rgba(255,90,90,.15);border-color:rgba(255,90,90,.38);"><div class="raceno-cell-no">4R</div><div class="raceno-cell-val" style="color:var(--red);">54</div></div>
+      <div class="raceno-cell" style="background:rgba(0,184,107,.10);border-color:rgba(0,184,107,.3);"><div class="raceno-cell-no">5R</div><div class="raceno-cell-val" style="color:var(--green);">35</div></div>
+      <div class="raceno-cell" style="background:rgba(255,90,90,.13);border-color:rgba(255,90,90,.32);"><div class="raceno-cell-no">6R</div><div class="raceno-cell-val" style="color:var(--red);">52</div></div>
+      <div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">7R</div><div class="raceno-cell-val" style="color:var(--gold);">47</div></div>
+      <div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">8R</div><div class="raceno-cell-val" style="color:var(--gold);">47</div></div>
+      <div class="raceno-cell" style="background:rgba(0,184,107,.08);border-color:rgba(0,184,107,.25);"><div class="raceno-cell-no">9R</div><div class="raceno-cell-val" style="color:var(--green);">38</div></div>
+      <div class="raceno-cell" style="background:rgba(0,184,107,.08);border-color:rgba(0,184,107,.25);"><div class="raceno-cell-no">10R</div><div class="raceno-cell-val" style="color:var(--green);">40</div></div>
+      <div class="raceno-cell" style="background:rgba(0,184,107,.16);border-color:rgba(0,184,107,.4);"><div class="raceno-cell-no">11R</div><div class="raceno-cell-val" style="color:var(--green);">24</div></div>
+      <div class="raceno-cell" style="background:rgba(0,184,107,.14);border-color:rgba(0,184,107,.35);"><div class="raceno-cell-no">12R</div><div class="raceno-cell-val" style="color:var(--green);">28</div></div>
+    </div>
+    <div class="rule-desc" style="margin-bottom:1.2rem;">数値が低いほど「堅い」、高いほど「荒れやすい」ことを示す。住之江は<span class="num">2R〜4R</span>と<span class="num">6R</span>で荒れスコアが50超と高く、<span class="num">5R・9R〜12R</span>は30台以下で明確に堅い。</div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">R-1</span>
+        <span class="rule-tag raceno">終盤戦（11R・12R）</span>
+        <span class="rule-title">最終盤はイン逃げ濃厚、1号艇本線で手堅く</span>
+        <span class="rule-reliability high">信頼度：高（直近1年 全レース）</span>
+      </div>
+      <div class="rule-desc">
+        11Rの1号艇1着率は<span class="num">76%</span>、12Rは<span class="num">72%</span>と、全12レース中で最も高い水準。荒れスコアも11R<span class="num">24</span>・12R<span class="num">28</span>と最低水準で、住之江の最終盤は「堅い」傾向が明確。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">11R 1号艇1着率：<b>76%</b></span>
+        <span class="rule-stat">12R 1号艇1着率：<b>72%</b></span>
+        <span class="rule-stat">全体平均：<b>57%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip"><span class="boat-circle b1">1</span>軸固定の2連単・3連単本線勝負、点数を絞って高確率狙い</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">R-2</span>
+        <span class="rule-tag raceno">序盤〜中盤（2R〜4R・6R）</span>
+        <span class="rule-title">序盤戦は荒れ想定でワイドに構える</span>
+        <span class="rule-reliability mid">信頼度：中（直近1年 全レース）</span>
+      </div>
+      <div class="rule-desc">
+        2R〜4Rは1号艇1着率が<span class="num">45〜46%</span>まで低下し、荒れスコアも50台後半に達する。6Rも荒れスコア<span class="num">52</span>と高め。この時間帯は1点勝負を避け、点数を広げた方が収支は安定しやすい。
+      </div>
+      <div class="rule-stats">
+        <span class="rule-stat">2R 1号艇：<b>47%</b></span>
+        <span class="rule-stat">3R 1号艇：<b>45%</b></span>
+        <span class="rule-stat">4R 1号艇：<b>46%</b></span>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連複 <span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span> フォーメーション、または2連単の相手を広く流す</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ TAB 5: 1号艇診断（選手指数×住之江の決まり手を掛け合わせる） ============ -->
+  <div id="tab-scouting-suminoe" class="subtab-panel">
+
+    <div class="section-heading">1号艇の「負け方」データから狙い目を決める<span class="section-heading-note">📊コース別マスタ（全国・選手×コース1）× 住之江 決まり手内訳（直近1年）</span></div>
+    <div class="rule-desc" style="margin-bottom:1.1rem;">
+      マスタの「📊コース別マスタ」シートで、その日の1号艇選手を <span class="num">コース＝1</span> で検索すると、「差され%」「捲られ%」「捲り差され%」という<strong>コース1で負けた時の内訳</strong>が選手ごとに出ます。この値が高い選手＝そのタイプで負けやすい選手です。住之江は決まり手ごとに「実行するのはどのコースが多いか」がはっきり偏っているため、選手の弱点タイプ×住之江の傾向を掛け合わせると、狙う号艇を絞り込めます。
+    </div>
+
+    <div class="detail-panel" style="margin-bottom:1.3rem;">
+      <div style="padding:1rem 1.25rem;">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.7rem;">今日の1号艇選手の数値を入力（📊コース別マスタ参照）</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1rem;">
+          <label style="font-size:.78rem;color:var(--text2);">
+            逃げ%（コース1勝率）<br>
+            <input type="number" id="in-nige" min="0" max="100" step="1" value="49" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);">
+          </label>
+          <label style="font-size:.78rem;color:var(--text2);">
+            差され%<br>
+            <input type="number" id="in-sasare" min="0" max="100" step="1" value="11" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);">
+          </label>
+          <label style="font-size:.78rem;color:var(--text2);">
+            捲られ%<br>
+            <input type="number" id="in-makurare" min="0" max="100" step="1" value="14" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);">
+          </label>
+          <label style="font-size:.78rem;color:var(--text2);">
+            捲り差され%<br>
+            <input type="number" id="in-makusasare" min="0" max="100" step="1" value="11" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);">
+          </label>
+        </div>
+        <button onclick="diagnose()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.6rem 1.4rem;font-size:.85rem;font-weight:700;cursor:pointer;">狙い目を判定する</button>
+        <div id="diag-result" style="margin-top:1rem;"></div>
+      </div>
+    </div>
+
+    <div class="section-heading">判定ロジックの根拠となる基準値<span class="section-heading-note">全国・コース1・出走数20以上（n=1,531選手）の分布</span></div>
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-1</span>
+        <span class="rule-tag kimarite">差され% が高い</span>
+        <span class="rule-title">差され%が20%以上（全国上位25%）なら2号艇を本線級に</span>
+        <span class="rule-reliability high">住之江：差し勝ちの70%は2号艇（n=227中159）</span>
+      </div>
+      <div class="rule-desc">
+        全国の1号艇平均は<span class="num">差され% 中央値11%</span>。20%（上位25%）を超える選手は「差しに弱いイン屋」。住之江で1号艇が「差し」で負ける227レースのうち<span class="num">159レース（70%）</span>は2号艇が原因で、他コースは僅か。差されタイプの1号艇なら2号艇の信頼度が一段上がる。
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">2連単 <span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span> を本線級／3連単 <span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>-流し</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-2</span>
+        <span class="rule-tag kimarite">捲られ% が高い</span>
+        <span class="rule-title">捲られ%が25%以上（全国上位25%）なら3号艇・4号艇を厚めに</span>
+        <span class="rule-reliability high">住之江：まくり成立316件中 4号艇33%／3号艇31%／2号艇26%</span>
+      </div>
+      <div class="rule-desc">
+        全国中央値は<span class="num">14%</span>、34%以上（上位10%）は「まくりに弱い」選手として要警戒。住之江でまくりが決まる316レースの内訳は4号艇<span class="num">33%</span>・3号艇<span class="num">31%</span>とほぼ同格、2号艇も<span class="num">26%</span>と侮れない。K-3／K-4カードの2着分布と合わせてフォーメーションを組むと精度が上がる。
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連複 <span class="boat-circle b3">3</span><span class="boat-circle b4">4</span><span class="boat-circle b1">1</span>／<span class="boat-circle b4">4</span><span class="boat-circle b3">3</span><span class="boat-circle b2">2</span> ボックス中心</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-3</span>
+        <span class="rule-tag kimarite">捲り差され% が高い</span>
+        <span class="rule-title">捲り差され%が18%以上（全国上位25%）なら3号艇・5号艇を意識</span>
+        <span class="rule-reliability mid">住之江：まくり差し成立210件中 3号艇39%／5号艇32%／4号艇24%</span>
+      </div>
+      <div class="rule-desc">
+        全国中央値は<span class="num">11%</span>。住之江でまくり差しが決まる210レースの内訳は3号艇<span class="num">39%</span>が最多だが、5号艇も<span class="num">32%</span>と全国的にはあまり見ない高さで住之江特有の傾向。1号艇がこのタイプで負けやすい選手の日は、5号艇の一撃を軽視しない。
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連複 <span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b1">1</span>／<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b4">4</span> を配当妙味込みで一点</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-4</span>
+        <span class="rule-tag raceno">逃げ% が高い</span>
+        <span class="rule-title">逃げ%が64%以上（全国上位25%）ならイン軸を格上げ</span>
+        <span class="rule-reliability high">住之江のイン逃げ率55%を選手適性で上振れ補正</span>
+      </div>
+      <div class="rule-desc">
+        全国中央値<span class="num">49%</span>に対し、64%以上（上位25%）は「イン粘り強い」タイプ。W-1（無風〜微風）などの気象条件攻略と重なった日は、1号艇本線の信頼度がさらに高まる。逆に34%未満（下位25%）なら、住之江平均より割り引いて評価したい。
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip"><span class="boat-circle b1">1</span>軸の点数を絞って本線勝負（気象条件攻略W-1と併用推奨）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手）に基づく個人指数です。住之江固有の値ではないため、あくまで「その選手がどう負けやすいタイプか」を見る指標として使い、住之江の決まり手内訳（コース別の実行率）と掛け合わせて判定してください。
+    </div>
+  </div>
+
+
+</div>
+
+
+<div class="venue-content" id="venue-content-gamagori">
+  <div class="venue-hero">
+    <div class="venue-hero-eyebrow">GAMAGORI ／ COURSE STRATEGY</div>
+    <div class="venue-hero-title">蒲郡 <small>条件攻略</small></div>
+    <div class="venue-hero-sub">集計期間：気象データ 2023-01-01〜2026-05-31（n=6,243）／ 会場基本統計・展開データ 直近1年 2025-05-31〜2026-05-31（n=1,738）<br>住之江と同じロジックで、蒲郡固有の気象・決まり手傾向を条件カード化しています。</div>
+    <div class="venue-hero-badges"><span class="vh-badge accent">イン逃げ率 57%（全国+3pt）</span><span class="vh-badge">荒れスコア 43</span><span class="vh-badge">条件ルール 15件（選手指数連動4件含む）</span></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('summary-gamagori', this)">会場サマリー</button>
+    <button class="tab-btn" onclick="showTab('weather-gamagori', this)">気象条件攻略</button>
+    <button class="tab-btn" onclick="showTab('kimarite-gamagori', this)">決まり手・進入替わり攻略</button>
+    <button class="tab-btn" onclick="showTab('raceno-gamagori', this)">レース番号傾向</button>
+    <button class="tab-btn" onclick="showTab('scouting-gamagori', this)">1号艇診断</button>
+  </div>
+
+  <div id="tab-summary-gamagori" class="subtab-panel active">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-card-label">レース数（直近1年）</div><div class="stat-card-value">1,738</div><div class="stat-card-sub">2025-05-31〜2026-05-31</div></div>
+      <div class="stat-card"><div class="stat-card-label">イン逃げ率</div><div class="stat-card-value accent">57%</div><div class="stat-card-sub">全国平均比 +3pt</div></div>
+      <div class="stat-card"><div class="stat-card-label">荒れスコア</div><div class="stat-card-value">43</div><div class="stat-card-sub">全国中位〜やや堅め</div></div>
+    </div>
+
+    <div class="section-heading">コース別1着率（全国平均比）</div>
+    <div class="detail-panel"><div style="padding:1rem 1.25rem;">
+      
+        <div class="course-bar-row">
+          <span class="boat-circle b1">1</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:59%;background:#94a3b8;"></div></div>
+          <span class="course-bar-pct">59%</span>
+          <span class="course-bar-diff up">+3pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b2">2</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:12%;background:#000000;"></div></div>
+          <span class="course-bar-pct">12%</span>
+          <span class="course-bar-diff down">-2pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b3">3</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:12%;background:#e60012;"></div></div>
+          <span class="course-bar-pct">12%</span>
+          <span class="course-bar-diff down">-2pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b4">4</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:11%;background:#0066cc;"></div></div>
+          <span class="course-bar-pct">11%</span>
+          <span class="course-bar-diff up">0pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b5">5</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:5%;background:#ffcc00;"></div></div>
+          <span class="course-bar-pct">5%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b6">6</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:1%;background:#00a651;"></div></div>
+          <span class="course-bar-pct">1%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+    </div></div>
+
+    <div class="section-heading">決まり手内訳</div>
+    <div class="detail-panel"><div style="padding:1rem 1.25rem;">
+      <div class="kimarite-stack"><div class="kimarite-seg" style="width:57%;background:var(--accent2);">逃げ 57%</div><div class="kimarite-seg" style="width:9%;background:var(--green);">差し 9%</div><div class="kimarite-seg" style="width:15%;background:var(--red);">まくり 16%</div><div class="kimarite-seg" style="width:13%;background:var(--orange);">まくり差し 13%</div><div class="kimarite-seg" style="width:6%;background:var(--text3);">抜き 6%</div></div><div class="kimarite-legend"><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--accent2);"></span>逃げ 57%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--green);"></span>差し 9%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--red);"></span>まくり 15%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--orange);"></span>まくり差し 13%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--text3);"></span>抜き 6%</div></div>
+    </div></div>
+
+    <div class="disclaimer-box"><strong>このページの見方</strong>：以下のタブは蒲郡の過去データから抽出した条件付き傾向です。右上バッジはサンプル数（n）に基づく信頼度の目安（高＝概ねn≥100、中＝n50〜99、低＝n50未満で参考程度）です。</div>
+  </div>
+  <div id="tab-weather-gamagori" class="subtab-panel">
+    <div class="section-heading">気象条件 × コース成績<span class="section-heading-note">気象統計マスタ（n=6,243・2023-01-01〜2026-05-31）</span></div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-1</span>
+        <span class="rule-tag weather">気象・風速</span>
+        <span class="rule-title">風速1m前後が最強、6m以上で急激に崩れる</span>
+        <span class="rule-reliability high">信頼度：高（n=1,246）</span>
+      </div>
+      <div class="rule-desc">風速1mのイン1着率は<span class="num">66%</span>と全風速帯で最も高い。0m<span class="num">62%</span>・2m<span class="num">60%</span>も高水準。一方、6mになると<span class="num">45%</span>まで急落し、差し16%・まくり17%が上昇する。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">1m：<b>66%</b>（n=1,246）</span><span class="rule-stat">0m：<b>62%</b></span><span class="rule-stat">6m：<b>45%</b>（n=121）</span><span class="rule-stat">全体：<b>58%</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos"><span class="boat-circle b1">1</span>固定：無風〜2mは本線勝負、6m以上は点数を広げる（3連複<span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>ボックス）</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-2</span>
+        <span class="rule-tag weather">気象・波高</span>
+        <span class="rule-title">波高0cmの完全凪は鉄板、1cm付くだけで一段階崩れる</span>
+        <span class="rule-reliability high">信頼度：高（n=1,115）</span>
+      </div>
+      <div class="rule-desc">波高0cm時のイン1着率は<span class="num">66%</span>だが、1cmになると<span class="num">58%</span>まで-8pt低下。2cm<span class="num">54%</span>、3cm<span class="num">50%</span>と波が立つほど段階的に崩れていく。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">0cm：<b>66%</b>（n=1,115）</span><span class="rule-stat">1cm：<b>58%</b>（n=3,642）</span><span class="rule-stat">2cm：<b>54%</b>（n=1,009）</span><span class="rule-stat">3cm：<b>50%</b>（n=372）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">0cm：<span class="boat-circle b1">1</span>固定本線／1cm以上：<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-流し等で相手を広げる</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-3</span>
+        <span class="rule-tag weather">気象・風向</span>
+        <span class="rule-title">北東風は鉄板、南・南西系はまくりが増える荒れ方向</span>
+        <span class="rule-reliability high">信頼度：高（n=1,189）</span>
+      </div>
+      <div class="rule-desc">風向別では北東<span class="num">67%</span>が最も堅く、南<span class="num">55%</span>・南西<span class="num">53%</span>が低い。南風時はまくり率が<span class="num">21%</span>と全風向中最大で、蒲郡は南系の風で「外から捲る」パターンが増える。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">北東 イン：<b>67%</b>（n=184）</span><span class="rule-stat">南 イン：<b>55%</b>（n=354）</span><span class="rule-stat">南 まくり：<b>21%</b></span><span class="rule-stat">南西 イン：<b>53%</b>（n=835）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">南・南西風：3連単<span class="boat-circle b4">4</span>-<span class="boat-circle b1">1</span>-流し／<span class="boat-circle b1">1</span>-<span class="boat-circle b4">4</span>-流し</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-4</span>
+        <span class="rule-tag weather">気象・天候</span>
+        <span class="rule-title">雨天はまくり・まくり差しが同時に増える</span>
+        <span class="rule-reliability high">信頼度：高（n=619）</span>
+      </div>
+      <div class="rule-desc">雨天時はまくり<span class="num">17%</span>・まくり差し<span class="num">15%</span>と、晴天時（まくり15%・まくり差し13%）よりどちらも上昇。住之江のように差しが伸びるタイプではなく、外側からの一撃が増えるのが蒲郡の雨の特徴。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">雨 まくり：<b>17%</b></span><span class="rule-stat">雨 まくり差し：<b>15%</b></span><span class="rule-stat">晴 まくり：<b>15%</b></span><span class="rule-stat">晴 まくり差し：<b>13%</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b1">1</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span>／<span class="boat-circle b1">1</span><span class="boat-circle b4">4</span><span class="boat-circle b5">5</span> フォーメーションで外目を厚く</div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-kimarite-gamagori" class="subtab-panel">
+    <div class="section-heading">決まり手別・展開別残存傾向<span class="section-heading-note">展開別残存_会場別／イン逃げ分析（直近1年）</span></div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-1</span>
+        <span class="rule-tag kimarite">イン逃げ成立時</span>
+        <span class="rule-title">1号艇逃げ切り後は2・3号艇が拮抗、3着内は3号艇がやや優位</span>
+        <span class="rule-reliability high">信頼度：最高（n=991）</span>
+      </div>
+      <div class="rule-desc">1号艇が逃げで1着のレース（n=991）では、2着率は2号艇<span class="num">34%</span>・3号艇<span class="num">32%</span>とほぼ横並び。3着以内率では3号艇<span class="num">57%</span>が2号艇<span class="num">56%</span>をわずかに上回る。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:34%;background:#000000;"></div></div><span class="rule-dist-val">34% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:32%;background:#e60012;"></div></div><span class="rule-dist-val">32% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:57%;background:#e60012;"></div></div><span class="rule-dist-val">57% （3着以内）</span></div><div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:56%;background:#000000;"></div></div><span class="rule-dist-val">56% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連単<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-<span class="boat-circle b3">3</span>／<span class="boat-circle b1">1</span>-<span class="boat-circle b3">3</span>-<span class="boat-circle b2">2</span>本線＋<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-<span class="boat-circle b4">4</span>／<span class="boat-circle b1">1</span>-<span class="boat-circle b4">4</span>-<span class="boat-circle b2">2</span>を厚めに</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-2</span>
+        <span class="rule-tag kimarite">2号艇 差し成立時</span>
+        <span class="rule-title">2号艇差しの後は1号艇の残存が圧倒的</span>
+        <span class="rule-reliability mid">信頼度：中（n=98・信頼度65%）</span>
+      </div>
+      <div class="rule-desc">1着が2号艇（差し）のレースでは、2着に1号艇が入る割合が<span class="num">54%</span>で突出。3着以内率も<span class="num">79%</span>に達し、住之江でも見られた「差された1号艇が2着に戻る」パターンが蒲郡でも確認できる。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:54%;background:#94a3b8;"></div></div><span class="rule-dist-val">54% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:20%;background:#0066cc;"></div></div><span class="rule-dist-val">20% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:79%;background:#94a3b8;"></div></div><span class="rule-dist-val">79% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>を厚く／3連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>-<span class="boat-circle b4">4</span></div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-3</span>
+        <span class="rule-tag kimarite">3号艇 まくり差し成立時</span>
+        <span class="rule-title">3号艇まくり差しの後は1号艇の残存が極めて高い</span>
+        <span class="rule-reliability mid">信頼度：中（n=93・信頼度62%）</span>
+      </div>
+      <div class="rule-desc">1着が3号艇（まくり差し）のレースでは、2着に1号艇が入る割合が<span class="num">67%</span>、3着以内率<span class="num">89%</span>という蒲郡の中でも最も再現性の高い数値が出ている。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:67%;background:#94a3b8;"></div></div><span class="rule-dist-val">67% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:6%;background:#0066cc;"></div></div><span class="rule-dist-val">6% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:89%;background:#94a3b8;"></div></div><span class="rule-dist-val">89% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連複<span class="boat-circle b1">1</span><span class="boat-circle b3">3</span>／3連単<span class="boat-circle b3">3</span>-<span class="boat-circle b1">1</span>-流し</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-4</span>
+        <span class="rule-tag kimarite">4号艇 まくり成立時</span>
+        <span class="rule-title">4号艇まくりの後は5号艇の巻き返しが最多</span>
+        <span class="rule-reliability high">信頼度：高（n=109・信頼度73%）</span>
+      </div>
+      <div class="rule-desc">1着が4号艇（まくり）のレースでは、2着率は5号艇が<span class="num">41%</span>で全艇中最多。3着以内率も<span class="num">59%</span>で最高となり、住之江と同様「4カドまくり時は5号艇を軽視できない」傾向が蒲郡でも一致する。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:41%;background:#ffcc00;"></div></div><span class="rule-dist-val">41% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:17%;background:#94a3b8;"></div></div><span class="rule-dist-val">17% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:59%;background:#ffcc00;"></div></div><span class="rule-dist-val">59% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連複<span class="boat-circle b4">4</span><span class="boat-circle b5">5</span>／3連単<span class="boat-circle b4">4</span>-<span class="boat-circle b5">5</span>-流し</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-5</span>
+        <span class="rule-tag kimarite">2号艇 まくり成立時</span>
+        <span class="rule-title">2号艇まくりの後は3号艇の残存が最多</span>
+        <span class="rule-reliability mid">信頼度：中（n=79・信頼度53%）</span>
+      </div>
+      <div class="rule-desc">1着が2号艇（まくり）のレースでは、2着率は3号艇が<span class="num">39%</span>で最多、3着以内率も<span class="num">61%</span>で最高。2号艇の捲りは3号艇を巻き込むケースが多い。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:39%;background:#e60012;"></div></div><span class="rule-dist-val">39% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:30%;background:#0066cc;"></div></div><span class="rule-dist-val">30% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:61%;background:#e60012;"></div></div><span class="rule-dist-val">61% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>／3連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-raceno-gamagori" class="subtab-panel">
+    <div class="section-heading">レース番号別 荒れスコア（1R〜12R）<span class="section-heading-note">会場統計（直近1年 n=1,738）</span></div>
+    <div class="raceno-strip"><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">1R</div><div class="raceno-cell-val" style="color:var(--red);">54</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">2R</div><div class="raceno-cell-val" style="color:var(--gold);">46</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">3R</div><div class="raceno-cell-val" style="color:var(--gold);">46</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">4R</div><div class="raceno-cell-val" style="color:var(--red);">61</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">5R</div><div class="raceno-cell-val" style="color:var(--red);">49</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">6R</div><div class="raceno-cell-val" style="color:var(--gold);">48</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">7R</div><div class="raceno-cell-val" style="color:var(--green);">32</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">8R</div><div class="raceno-cell-val" style="color:var(--red);">52</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">9R</div><div class="raceno-cell-val" style="color:var(--gold);">39</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">10R</div><div class="raceno-cell-val" style="color:var(--green);">25</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">11R</div><div class="raceno-cell-val" style="color:var(--green);">28</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">12R</div><div class="raceno-cell-val" style="color:var(--green);">28</div></div></div>
+    <div class="rule-desc" style="margin-bottom:1.2rem;">蒲郡は<span class="num">4R</span>の荒れスコアが<span class="num">61</span>と最も高く、1号艇1着率も<span class="num">39%</span>まで落ち込む。逆に<span class="num">10R〜12R</span>は荒れスコアが25〜28台と低く、1号艇1着率も70%超で安定する。</div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">R-1</span>
+        <span class="rule-tag raceno">終盤戦（10R〜12R）</span>
+        <span class="rule-title">終盤はイン逃げ濃厚、1号艇本線で手堅く</span>
+        <span class="rule-reliability high">信頼度：高（直近1年 全レース）</span>
+      </div>
+      <div class="rule-desc">10Rの1号艇1着率は<span class="num">75%</span>、11Rは<span class="num">72%</span>、12Rは<span class="num">72%</span>と高水準が3レース続く。荒れスコアも25/28/28と最低水準。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">10R 1号艇：<b>75%</b></span><span class="rule-stat">11R 1号艇：<b>72%</b></span><span class="rule-stat">12R 1号艇：<b>72%</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos"><span class="boat-circle b1">1</span>軸固定の2連単・3連単本線勝負、点数を絞って高確率狙い</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">R-2</span>
+        <span class="rule-tag raceno">序盤〜中盤（4R・7R）</span>
+        <span class="rule-title">4Rは特に荒れやすく、点数を広げたい</span>
+        <span class="rule-reliability mid">信頼度：中（直近1年 全レース）</span>
+      </div>
+      <div class="rule-desc">4Rは1号艇1着率が<span class="num">39%</span>まで低下し、荒れスコアは全12レース中最高の<span class="num">61</span>。7Rも1号艇1着率<span class="num">68%</span>と一見高いが荒れスコア自体は<span class="num">32</span>で中庸、レースごとの見極めが必要。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">4R 1号艇：<b>39%</b></span><span class="rule-stat">4R 荒れスコア：<b>61</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span>フォーメーション、または2連単の相手を広く流す</div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-scouting-gamagori" class="subtab-panel">
+    <div class="section-heading">1号艇の「負け方」データから狙い目を決める<span class="section-heading-note">📊コース別マスタ（全国・選手×コース1）× 蒲郡 決まり手内訳（直近1年）</span></div>
+    <div class="rule-desc" style="margin-bottom:1.1rem;">「📊コース別マスタ」でその日の1号艇選手を<span class="num">コース＝1</span>で検索し、「差され%」「捲られ%」「捲り差され%」「逃げ%」を入力してください。全国分布の基準値と、蒲郡で実際にそのパターンが決まった時の号艇内訳を掛け合わせて狙い目を判定します。</div>
+
+    <div class="detail-panel" style="margin-bottom:1.3rem;"><div style="padding:1rem 1.25rem;">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.7rem;">今日の1号艇選手の数値を入力</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1rem;">
+        <label style="font-size:.78rem;color:var(--text2);">逃げ%（コース1勝率）<br><input type="number" id="in-nige-gamagori" min="0" max="100" step="1" value="49" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+        <label style="font-size:.78rem;color:var(--text2);">差され%<br><input type="number" id="in-sasare-gamagori" min="0" max="100" step="1" value="11" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+        <label style="font-size:.78rem;color:var(--text2);">捲られ%<br><input type="number" id="in-makurare-gamagori" min="0" max="100" step="1" value="14" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+        <label style="font-size:.78rem;color:var(--text2);">捲り差され%<br><input type="number" id="in-makusasare-gamagori" min="0" max="100" step="1" value="11" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+      </div>
+      <button onclick="diagnose('gamagori')" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.6rem 1.4rem;font-size:.85rem;font-weight:700;cursor:pointer;">狙い目を判定する</button>
+      <div id="diag-result-gamagori" style="margin-top:1rem;"></div>
+    </div></div>
+
+    <div class="section-heading">判定ロジックの根拠となる基準値<span class="section-heading-note">全国・コース1・出走数20以上（n=1,531選手）の分布</span></div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-1</span>
+        <span class="rule-tag kimarite">差され% が高い</span>
+        <span class="rule-title">差され%が20%以上（全国上位25%）なら2号艇を本線級に</span>
+        <span class="rule-reliability high">蒲郡：差し勝ちの65%は2号艇（n=150中98）</span>
+      </div>
+      <div class="rule-desc">全国中央値は<span class="num">11%</span>。蒲郡で1号艇が「差し」で負ける150レースのうち<span class="num">98レース（65%）</span>は2号艇が原因。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>を本線級に格上げ</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-2</span>
+        <span class="rule-tag kimarite">捲られ% が高い</span>
+        <span class="rule-title">捲られ%が25%以上（全国上位25%）なら4号艇を軸に、2号艇も注意</span>
+        <span class="rule-reliability high">蒲郡：まくり成立269件中 4号艇40%／2号艇29%／3号艇22%</span>
+      </div>
+      <div class="rule-desc">全国中央値は<span class="num">14%</span>。蒲郡のまくりは4号艇が主体（40%）で、住之江・常滑よりもさらに4号艇偏重が強い。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b4">4</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span>／<span class="boat-circle b4">4</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>ボックス中心</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-3</span>
+        <span class="rule-tag kimarite">捲り差され% が高い</span>
+        <span class="rule-title">捲り差され%が18%以上（全国上位25%）なら3号艇・5号艇を意識</span>
+        <span class="rule-reliability mid">蒲郡：まくり差し成立219件中 3号艇42%／5号艇27%／4号艇24%</span>
+      </div>
+      <div class="rule-desc">全国中央値は<span class="num">11%</span>。蒲郡のまくり差しは3号艇が最多だが、5号艇も4分の1超で油断できない。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b3">3</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span>／<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b4">4</span>を配当妙味込みで</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-4</span>
+        <span class="rule-tag raceno">逃げ% が高い</span>
+        <span class="rule-title">逃げ%が64%以上（全国上位25%）ならイン軸を格上げ</span>
+        <span class="rule-reliability high">蒲郡のイン逃げ率57%を選手適性で上振れ補正</span>
+      </div>
+      <div class="rule-desc">全国中央値<span class="num">49%</span>に対し64%以上は「イン粘り強い」タイプ。W-1（風速1m前後）と重なった日は1号艇本線の信頼度がさらに高まる。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos"><span class="boat-circle b1">1</span>軸の点数を絞って本線勝負（気象条件攻略W-1と併用推奨）</div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手）に基づく個人指数です。蒲郡固有の値ではないため、あくまで選手の負け方タイプの参考値とし、蒲郡の決まり手内訳と掛け合わせて判定してください。</div>
+  </div>
+</div>
+
+<div class="venue-content" id="venue-content-tokoname">
+  <div class="venue-hero">
+    <div class="venue-hero-eyebrow">TOKONAME ／ COURSE STRATEGY</div>
+    <div class="venue-hero-title">常滑 <small>条件攻略</small></div>
+    <div class="venue-hero-sub">集計期間：気象データ 2023-01-01〜2026-05-31（n=5,994）／ 会場基本統計・展開データ 直近1年 2025-05-31〜2026-05-31（n=1,792）<br>住之江・蒲郡と同じロジックで、常滑固有の気象・決まり手傾向を条件カード化しています。</div>
+    <div class="venue-hero-badges"><span class="vh-badge accent">イン逃げ率 57%（全国+4pt）</span><span class="vh-badge">荒れスコア 43</span><span class="vh-badge">条件ルール 19件（選手指数連動4件含む）</span></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('summary-tokoname', this)">会場サマリー</button>
+    <button class="tab-btn" onclick="showTab('weather-tokoname', this)">気象条件攻略</button>
+    <button class="tab-btn" onclick="showTab('kimarite-tokoname', this)">決まり手・進入替わり攻略</button>
+    <button class="tab-btn" onclick="showTab('raceno-tokoname', this)">レース番号傾向</button>
+    <button class="tab-btn" onclick="showTab('scouting-tokoname', this)">1号艇診断</button>
+  </div>
+
+  <div id="tab-summary-tokoname" class="subtab-panel active">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-card-label">レース数（直近1年）</div><div class="stat-card-value">1,792</div><div class="stat-card-sub">2025-05-31〜2026-05-31</div></div>
+      <div class="stat-card"><div class="stat-card-label">イン逃げ率</div><div class="stat-card-value accent">57%</div><div class="stat-card-sub">全国平均比 +4pt</div></div>
+      <div class="stat-card"><div class="stat-card-label">荒れスコア</div><div class="stat-card-value">43</div><div class="stat-card-sub">全国中位〜やや堅め</div></div>
+    </div>
+
+    <div class="section-heading">コース別1着率（全国平均比）</div>
+    <div class="detail-panel"><div style="padding:1rem 1.25rem;">
+      
+        <div class="course-bar-row">
+          <span class="boat-circle b1">1</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:60%;background:#94a3b8;"></div></div>
+          <span class="course-bar-pct">60%</span>
+          <span class="course-bar-diff up">+4pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b2">2</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:12%;background:#000000;"></div></div>
+          <span class="course-bar-pct">12%</span>
+          <span class="course-bar-diff down">-2pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b3">3</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:10%;background:#e60012;"></div></div>
+          <span class="course-bar-pct">10%</span>
+          <span class="course-bar-diff down">-3pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b4">4</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:10%;background:#0066cc;"></div></div>
+          <span class="course-bar-pct">10%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b5">5</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:6%;background:#ffcc00;"></div></div>
+          <span class="course-bar-pct">6%</span>
+          <span class="course-bar-diff down">-1pt</span>
+        </div>
+        <div class="course-bar-row">
+          <span class="boat-circle b6">6</span>
+          <div class="course-bar-track"><div class="course-bar-fill" style="width:2%;background:#00a651;"></div></div>
+          <span class="course-bar-pct">2%</span>
+          <span class="course-bar-diff down">0pt</span>
+        </div>
+    </div></div>
+
+    <div class="section-heading">決まり手内訳</div>
+    <div class="detail-panel"><div style="padding:1rem 1.25rem;">
+      <div class="kimarite-stack"><div class="kimarite-seg" style="width:57%;background:var(--accent2);">逃げ 57%</div><div class="kimarite-seg" style="width:10%;background:var(--green);">差し 10%</div><div class="kimarite-seg" style="width:15%;background:var(--red);">まくり 15%</div><div class="kimarite-seg" style="width:12%;background:var(--orange);">まくり差し 12%</div><div class="kimarite-seg" style="width:5%;background:var(--text3);">抜き 5%</div></div><div class="kimarite-legend"><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--accent2);"></span>逃げ 57%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--green);"></span>差し 10%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--red);"></span>まくり 15%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--orange);"></span>まくり差し 12%</div><div class="kimarite-legend-item"><span class="kimarite-dot" style="background:var(--text3);"></span>抜き 5%</div></div>
+    </div></div>
+
+    <div class="disclaimer-box"><strong>このページの見方</strong>：以下のタブは常滑の過去データから抽出した条件付き傾向です。右上バッジはサンプル数（n）に基づく信頼度の目安（高＝概ねn≥100、中＝n50〜99、低＝n50未満で参考程度）です。</div>
+  </div>
+  <div id="tab-weather-tokoname" class="subtab-panel">
+    <div class="section-heading">気象条件 × コース成績<span class="section-heading-note">気象統計マスタ（n=5,994・2023-01-01〜2026-05-31）</span></div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-1</span>
+        <span class="rule-tag weather">気象・風速</span>
+        <span class="rule-title">無風〜2mは圧倒的に堅く、5m以上で急速に崩れる</span>
+        <span class="rule-reliability high">信頼度：高（n=3,186）</span>
+      </div>
+      <div class="rule-desc">無風時のイン1着率は<span class="num">73%</span>と突出（n=113）。1m<span class="num">62%</span>・2m<span class="num">62%</span>（n=2,067と大サンプル）も高水準。5mで<span class="num">51%</span>、7mで<span class="num">47%</span>（n=112）まで低下する。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">無風：<b>73%</b>（n=113）</span><span class="rule-stat">2m：<b>62%</b>（n=2,067）</span><span class="rule-stat">5m：<b>51%</b>（n=417）</span><span class="rule-stat">7m：<b>47%</b>（n=112）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">無風〜2m：<span class="boat-circle b1">1</span>固定本線／5m以上：3連複<span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>ボックスで点数分散</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-2</span>
+        <span class="rule-tag weather">気象・波高</span>
+        <span class="rule-title">波高3cm以上で明確に崩れ、以降は高止まり</span>
+        <span class="rule-reliability high">信頼度：高（n=941）</span>
+      </div>
+      <div class="rule-desc">波高0cm<span class="num">63%</span>・1cm<span class="num">62%</span>・2cm<span class="num">60%</span>までは緩やかな低下だが、3cmで<span class="num">52%</span>まで急落し、4〜6cmも50%前後で高止まりする。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">0cm：<b>63%</b>（n=1,529）</span><span class="rule-stat">2cm：<b>60%</b>（n=915）</span><span class="rule-stat">3cm：<b>52%</b>（n=464）</span><span class="rule-stat">6cm：<b>49%</b>（n=61）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">0〜2cm：<span class="boat-circle b1">1</span>固定本線／3cm以上：荒れ想定で3連複<span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span>フォーメーション</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-3</span>
+        <span class="rule-tag weather">気象・風種</span>
+        <span class="rule-title">常滑は珍しく向かい風の方がイン粘りやすい</span>
+        <span class="rule-reliability high">信頼度：高（n=4,201）</span>
+      </div>
+      <div class="rule-desc">一般的には追い風が有利になりやすいが、常滑は追い風<span class="num">58%</span>より向かい風<span class="num">61%</span>の方がイン1着率が高い逆転タイプ。無風時は<span class="num">73%</span>で圧倒的。横風は<span class="num">60%</span>で平均並み。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">向かい風：<b>61%</b>（n=2,571）</span><span class="rule-stat">追い風：<b>58%</b>（n=1,628）</span><span class="rule-stat">無風：<b>73%</b>（n=113）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">風向だけで一喜一憂せず、風速・波高（W-1／W-2）を優先して判断するのが常滑では有効</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-4</span>
+        <span class="rule-tag weather">気象・天候</span>
+        <span class="rule-title">雨天でも大きく崩れにくいが、決まり手はまくり差し・差しにシフト</span>
+        <span class="rule-reliability high">信頼度：高（n=501）</span>
+      </div>
+      <div class="rule-desc">雨天時のイン1着率は<span class="num">59%</span>で晴天<span class="num">60%</span>とあまり差がない。ただし決まり手はまくり<span class="num">9%</span>（晴天15%より低下）に対し、差し<span class="num">13%</span>・まくり差し<span class="num">15%</span>が上昇し、内寄りの決まり手にシフトする。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">雨 イン：<b>59%</b></span><span class="rule-stat">雨 まくり差し：<b>15%</b></span><span class="rule-stat">晴 まくり：<b>15%</b></span><span class="rule-stat">雨 まくり：<b>9%</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">雨天：2連単<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>／3連単<span class="boat-circle b1">1</span>-<span class="boat-circle b3">3</span>-流し</div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-5</span>
+        <span class="rule-tag weather">気象・風速×コース</span>
+        <span class="rule-title">風速7mになると3号艇だけが跳ねる</span>
+        <span class="rule-reliability high">信頼度：高（n=107）</span>
+      </div>
+      <div class="rule-desc">常滑の3号艇1着率は風速0〜6mの間は7〜16%で推移するが、<span class="num">7m</span>になると突然<span class="num">22%</span>まで跳ね上がり、3連対率も<span class="num">61%</span>に達する（全風速帯で最高値）。他の号艇にはこの「7mだけ」の跳ね方は見られず、常滑3号艇特有のクセ。</div>
+      <div class="rule-stats"><span class="rule-stat">7m 3号艇1着率：<b>22%</b>（n=107）</span><span class="rule-stat">全体 3号艇1着率：<b>10%</b></span><span class="rule-stat">7m 3号艇3連対率：<b>61%</b>（全体52%）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">風速7m表示を見たら3連単<span class="boat-circle b3">3</span>-流し-流し／3連複<span class="boat-circle b3">3</span>を軸にしたフォーメーション</div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-6</span>
+        <span class="rule-tag weather">気象・風種×風速×コース</span>
+        <span class="rule-title">追い風6m以上は2号艇・3号艇が同時に浮上</span>
+        <span class="rule-reliability mid">信頼度：中（n=230前後）</span>
+      </div>
+      <div class="rule-desc">追い風が6m以上まで強まると、2号艇の1着率は<span class="num">15%</span>（全体12%）、3号艇は<span class="num">16%</span>（全体10%）まで上昇する。1号艇は<span class="num">51%</span>まで低下しており、追い風が強い日は2・3号艇をまとめて相手に組み込みたい条件。</div>
+      <div class="rule-stats"><span class="rule-stat">追い風6m+ 1号艇：<b>51%</b></span><span class="rule-stat">追い風6m+ 2号艇：<b>15%</b></span><span class="rule-stat">追い風6m+ 3号艇：<b>16%</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>ボックス、または2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>／<span class="boat-circle b3">3</span>-<span class="boat-circle b1">1</span>の両面</div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">W-7</span>
+        <span class="rule-tag weather">気象・風向×コース</span>
+        <span class="rule-title">北東風は1号艇が最強、4号艇・6号艇は沈む</span>
+        <span class="rule-reliability high">信頼度：高（n=209〜212）</span>
+      </div>
+      <div class="rule-desc">北東風時、1号艇の1着率は全風向中最高の<span class="num">67%</span>。逆に4号艇は<span class="num">8%</span>（全体11%）、6号艇はわずか<span class="num">1%</span>（全体2%）まで沈み込み、外側の艇がほぼ機能しなくなる、常滑で最も「堅い」風向。</div>
+      <div class="rule-stats"><span class="rule-stat">北東風 1号艇：<b>67%</b>（n=209）</span><span class="rule-stat">北東風 4号艇：<b>8%</b>（n=212）</span><span class="rule-stat">北東風 6号艇：<b>1%</b>（n=210）</span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">北東風表示なら<span class="boat-circle b1">1</span>固定の1点〜数点勝負、4号艇・6号艇からの高配当狙いは見送り推奨</div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-kimarite-tokoname" class="subtab-panel">
+    <div class="section-heading">決まり手別・展開別残存傾向<span class="section-heading-note">展開別残存_会場別／イン逃げ分析（直近1年）</span></div>
+
+    <div class="rule-card" style="border-color:rgba(0,102,255,.35);box-shadow:0 6px 20px rgba(0,102,255,.12);">
+      <div class="rule-card-head">
+        <span class="rule-no">K-0</span>
+        <span class="rule-tag kimarite">1号艇が飛んだ（逃げられなかった）場合</span>
+        <span class="rule-title">1号艇不在時の主役ランキングは2→3→4号艇の僅差3強</span>
+        <span class="rule-reliability high">信頼度：最高（n=723）</span>
+      </div>
+      <div class="rule-desc">
+        「1号艇が飛ぶ」＝スタートで遅れる／転覇／出遅れなどでイン逃げが成立しないケース全体（差し・まくり・まくり差し・抜きの合算、n=723）を集計すると、1着を奪うのは<span class="num">2号艇29%</span>・<span class="num">3号艇26%</span>・<span class="num">4号艇25%</span>とほぼ3等分の大接戦。<span class="num">5号艇15%</span>にも十分な芽があり、6号艇のみ<span class="num">5%</span>と大きく離れる。「1号艇が危ない」と判断した時点で2・3・4号艇をまとめて相手にするのが常滑では合理的。
+      </div>
+      <div class="rule-dist">
+        <div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:29%;background:#000;"></div></div><span class="rule-dist-val">29%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:26%;background:#e60012;"></div></div><span class="rule-dist-val">26%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:25%;background:#0066cc;"></div></div><span class="rule-dist-val">25%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:15%;background:#ffcc00;"></div></div><span class="rule-dist-val">15%</span></div>
+        <div class="rule-dist-row"><span class="boat-circle b6">6</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:5%;background:#00a651;"></div></div><span class="rule-dist-val">5%</span></div>
+      </div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">
+          <span class="combo-chip">3連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span>ボックス（本線）</span>
+          <span class="combo-chip">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b3">3</span>／<span class="boat-circle b3">3</span>-<span class="boat-circle b2">2</span>／<span class="boat-circle b4">4</span>-<span class="boat-circle b2">2</span>の3点</span>
+          <span class="combo-chip">穴狙い：3連複に<span class="boat-circle b5">5</span>を絡めた4艇ボックス</span>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-1</span>
+        <span class="rule-tag kimarite">イン逃げ成立時</span>
+        <span class="rule-title">1号艇逃げ切り後は2号艇がやや優位、3号艇が僅差で続く</span>
+        <span class="rule-reliability high">信頼度：最高（n=1,025）</span>
+      </div>
+      <div class="rule-desc">1号艇が逃げで1着のレース（n=1,025）では、2着率は2号艇<span class="num">32%</span>・3号艇<span class="num">29%</span>。3着以内率も2号艇<span class="num">56%</span>が3号艇<span class="num">53%</span>をやや上回り、住之江・蒲郡とは逆に2号艇がわずかに優勢。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:32%;background:#000000;"></div></div><span class="rule-dist-val">32% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:29%;background:#e60012;"></div></div><span class="rule-dist-val">29% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b2">2</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:56%;background:#000000;"></div></div><span class="rule-dist-val">56% （3着以内）</span></div><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:53%;background:#e60012;"></div></div><span class="rule-dist-val">53% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連単<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-<span class="boat-circle b3">3</span>／<span class="boat-circle b1">1</span>-<span class="boat-circle b3">3</span>-<span class="boat-circle b2">2</span>本線＋<span class="boat-circle b1">1</span>-<span class="boat-circle b2">2</span>-<span class="boat-circle b4">4</span>を厚めに</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-2</span>
+        <span class="rule-tag kimarite">2号艇 差し成立時</span>
+        <span class="rule-title">2号艇差しの後は1号艇の残存が高い信頼度</span>
+        <span class="rule-reliability high">信頼度：高（n=133・信頼度89%）</span>
+      </div>
+      <div class="rule-desc">1着が2号艇（差し）のレースでは、2着に1号艇が入る割合が<span class="num">61%</span>。3着以内率も<span class="num">76%</span>で、常滑でもn=133という十分なサンプルで確認できる強いパターン。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:61%;background:#94a3b8;"></div></div><span class="rule-dist-val">61% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:11%;background:#0066cc;"></div></div><span class="rule-dist-val">11% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:76%;background:#94a3b8;"></div></div><span class="rule-dist-val">76% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>を厚く／3連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>-<span class="boat-circle b4">4</span></div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-3</span>
+        <span class="rule-tag kimarite">3号艇 まくり差し成立時</span>
+        <span class="rule-title">3号艇まくり差しの後は1号艇の残存が高い</span>
+        <span class="rule-reliability mid">信頼度：中（n=76・信頼度51%）</span>
+      </div>
+      <div class="rule-desc">1着が3号艇（まくり差し）のレースでは、2着に1号艇が入る割合が<span class="num">57%</span>、3着以内率<span class="num">72%</span>。蒲郡ほどではないが同傾向が確認できる。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:57%;background:#94a3b8;"></div></div><span class="rule-dist-val">57% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:13%;background:#0066cc;"></div></div><span class="rule-dist-val">13% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:72%;background:#94a3b8;"></div></div><span class="rule-dist-val">72% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連複<span class="boat-circle b1">1</span><span class="boat-circle b3">3</span>／3連単<span class="boat-circle b3">3</span>-<span class="boat-circle b1">1</span>-流し</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-4</span>
+        <span class="rule-tag kimarite">4号艇 まくり成立時</span>
+        <span class="rule-title">4号艇まくりの後は5号艇の巻き返しが最多</span>
+        <span class="rule-reliability high">信頼度：高（n=107・信頼度71%）</span>
+      </div>
+      <div class="rule-desc">1着が4号艇（まくり）のレースでは、2着率は5号艇が<span class="num">35%</span>で全艇中最多。3着以内率も<span class="num">55%</span>で最高となり、住之江・蒲郡と一致する傾向が常滑でも確認できる。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:35%;background:#ffcc00;"></div></div><span class="rule-dist-val">35% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b1">1</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:25%;background:#94a3b8;"></div></div><span class="rule-dist-val">25% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b5">5</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:55%;background:#ffcc00;"></div></div><span class="rule-dist-val">55% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連複<span class="boat-circle b4">4</span><span class="boat-circle b5">5</span>／3連単<span class="boat-circle b4">4</span>-<span class="boat-circle b5">5</span>-流し</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">K-5</span>
+        <span class="rule-tag kimarite">2号艇 まくり成立時</span>
+        <span class="rule-title">2号艇まくりの後は3号艇の残存が最多</span>
+        <span class="rule-reliability mid">信頼度：中（n=59・信頼度39%）</span>
+      </div>
+      <div class="rule-desc">1着が2号艇（まくり）のレースでは、2着率は3号艇が<span class="num">46%</span>で最多、3着以内率も<span class="num">64%</span>で最高。サンプルはやや小さめのため参考程度に。</div>
+      <div class="rule-dist"><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:46%;background:#e60012;"></div></div><span class="rule-dist-val">46% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b4">4</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:22%;background:#0066cc;"></div></div><span class="rule-dist-val">22% （2着）</span></div><div class="rule-dist-row"><span class="boat-circle b3">3</span><div class="rule-dist-track"><div class="rule-dist-fill" style="width:64%;background:#e60012;"></div></div><span class="rule-dist-val">64% （3着以内）</span></div></div>
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>／3連複<span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-raceno-tokoname" class="subtab-panel">
+    <div class="section-heading">レース番号別 荒れスコア（1R〜12R）<span class="section-heading-note">会場統計（直近1年 n=1,792）</span></div>
+    <div class="raceno-strip"><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">1R</div><div class="raceno-cell-val" style="color:var(--green);">26</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">2R</div><div class="raceno-cell-val" style="color:var(--red);">57</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">3R</div><div class="raceno-cell-val" style="color:var(--red);">52</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">4R</div><div class="raceno-cell-val" style="color:var(--red);">52</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">5R</div><div class="raceno-cell-val" style="color:var(--gold);">47</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">6R</div><div class="raceno-cell-val" style="color:var(--green);">27</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">7R</div><div class="raceno-cell-val" style="color:var(--gold);">49</div></div><div class="raceno-cell" style="background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35);"><div class="raceno-cell-no">8R</div><div class="raceno-cell-val" style="color:var(--red);">49</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">9R</div><div class="raceno-cell-val" style="color:var(--gold);">41</div></div><div class="raceno-cell" style="background:rgba(255,179,0,.12);border-color:rgba(255,179,0,.3);"><div class="raceno-cell-no">10R</div><div class="raceno-cell-val" style="color:var(--gold);">36</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">11R</div><div class="raceno-cell-val" style="color:var(--green);">32</div></div><div class="raceno-cell" style="background:rgba(0,184,107,.12);border-color:rgba(0,184,107,.32);"><div class="raceno-cell-no">12R</div><div class="raceno-cell-val" style="color:var(--green);">23</div></div></div>
+    <div class="rule-desc" style="margin-bottom:1.2rem;">常滑は他会場と異なり<span class="num">1R</span>から荒れスコア<span class="num">26</span>・1号艇1着率<span class="num">75%</span>と非常に堅い。ところが<span class="num">2R</span>で荒れスコアが<span class="num">57</span>まで急上昇し、1号艇1着率も<span class="num">43%</span>まで落ち込む。<span class="num">6R</span>・<span class="num">12R</span>も荒れスコア27台と堅い。</div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">R-1</span>
+        <span class="rule-tag raceno">1R・6R・12R</span>
+        <span class="rule-title">1R・6R・12Rはイン逃げ濃厚、1号艇本線で手堅く</span>
+        <span class="rule-reliability high">信頼度：高（直近1年 全レース）</span>
+      </div>
+      <div class="rule-desc">1Rの1号艇1着率は<span class="num">75%</span>、6Rは<span class="num">73%</span>、12Rは<span class="num">77%</span>と、他会場では見られない「1R自体が堅い」という常滑特有の傾向がある。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">1R 1号艇：<b>75%</b></span><span class="rule-stat">6R 1号艇：<b>73%</b></span><span class="rule-stat">12R 1号艇：<b>77%</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos"><span class="boat-circle b1">1</span>軸固定の2連単・3連単本線勝負、点数を絞って高確率狙い</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">R-2</span>
+        <span class="rule-tag raceno">2R〜4R</span>
+        <span class="rule-title">2R〜4Rは常滑で最も荒れやすい時間帯</span>
+        <span class="rule-reliability mid">信頼度：中（直近1年 全レース）</span>
+      </div>
+      <div class="rule-desc">2Rは荒れスコア<span class="num">57</span>・1号艇1着率<span class="num">43%</span>まで低下し、3R・4Rも同水準の荒れスコア52台が続く。1Rの堅さから一転して荒れる展開になりやすい。</div>
+      
+      <div class="rule-stats"><span class="rule-stat">2R 1号艇：<b>43%</b></span><span class="rule-stat">2R 荒れスコア：<b>57</b></span><span class="rule-stat">3R 荒れスコア：<b>52</b></span></div>
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b1">1</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span><span class="boat-circle b4">4</span>フォーメーション、または2連単の相手を広く流す</div>
+      </div>
+    </div>
+  </div>
+  <div id="tab-scouting-tokoname" class="subtab-panel">
+    <div class="section-heading">1号艇の「負け方」データから狙い目を決める<span class="section-heading-note">📊コース別マスタ（全国・選手×コース1）× 常滑 決まり手内訳（直近1年）</span></div>
+    <div class="rule-desc" style="margin-bottom:1.1rem;">「📊コース別マスタ」でその日の1号艇選手を<span class="num">コース＝1</span>で検索し、「差され%」「捲られ%」「捲り差され%」「逃げ%」を入力してください。全国分布の基準値と、常滑で実際にそのパターンが決まった時の号艇内訳を掛け合わせて狙い目を判定します。</div>
+
+    <div class="detail-panel" style="margin-bottom:1.3rem;"><div style="padding:1rem 1.25rem;">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.7rem;">今日の1号艇選手の数値を入力</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1rem;">
+        <label style="font-size:.78rem;color:var(--text2);">逃げ%（コース1勝率）<br><input type="number" id="in-nige-tokoname" min="0" max="100" step="1" value="49" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+        <label style="font-size:.78rem;color:var(--text2);">差され%<br><input type="number" id="in-sasare-tokoname" min="0" max="100" step="1" value="11" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+        <label style="font-size:.78rem;color:var(--text2);">捲られ%<br><input type="number" id="in-makurare-tokoname" min="0" max="100" step="1" value="14" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+        <label style="font-size:.78rem;color:var(--text2);">捲り差され%<br><input type="number" id="in-makusasare-tokoname" min="0" max="100" step="1" value="11" style="width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);"></label>
+      </div>
+      <button onclick="diagnose('tokoname')" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.6rem 1.4rem;font-size:.85rem;font-weight:700;cursor:pointer;">狙い目を判定する</button>
+      <div id="diag-result-tokoname" style="margin-top:1rem;"></div>
+    </div></div>
+
+    <div class="section-heading">判定ロジックの根拠となる基準値<span class="section-heading-note">全国・コース1・出走数20以上（n=1,531選手）の分布</span></div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-1</span>
+        <span class="rule-tag kimarite">差され% が高い</span>
+        <span class="rule-title">差され%が20%以上（全国上位25%）なら2号艇を本線級に</span>
+        <span class="rule-reliability high">常滑：差し勝ちの72%は2号艇（n=184中133）</span>
+      </div>
+      <div class="rule-desc">全国中央値は<span class="num">11%</span>。常滑で1号艇が「差し」で負ける184レースのうち<span class="num">133レース（72%）</span>は2号艇が原因で、住之江・蒲郡よりもさらに2号艇への偏りが強い。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>を本線級に格上げ</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-2</span>
+        <span class="rule-tag kimarite">捲られ% が高い</span>
+        <span class="rule-title">捲られ%が25%以上（全国上位25%）なら4号艇を軸に</span>
+        <span class="rule-reliability high">常滑：まくり成立262件中 4号艇41%／3号艇24%／2号艇22%</span>
+      </div>
+      <div class="rule-desc">全国中央値は<span class="num">14%</span>。常滑のまくりは4号艇が主体（41%）で、2位以下の3号艇・2号艇はほぼ同格。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b4">4</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span>／<span class="boat-circle b4">4</span><span class="boat-circle b3">3</span><span class="boat-circle b2">2</span>ボックス中心</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-3</span>
+        <span class="rule-tag kimarite">捲り差され% が高い</span>
+        <span class="rule-title">捲り差され%が18%以上（全国上位25%）なら3号艇・5号艇が完全に並ぶ</span>
+        <span class="rule-reliability mid">常滑：まくり差し成立209件中 3号艇36%／5号艇36%（同率）</span>
+      </div>
+      <div class="rule-desc">全国中央値は<span class="num">11%</span>。常滑のまくり差しは3号艇と5号艇が全く同じ36%で並んでおり、どちらか一方に絞らず両方を買い目に入れるのが有効。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos">3連複<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b1">1</span>／<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b4">4</span>ボックス</div>
+      </div>
+    </div>
+
+    
+    <div class="rule-card">
+      <div class="rule-card-head">
+        <span class="rule-no">P-4</span>
+        <span class="rule-tag raceno">逃げ% が高い</span>
+        <span class="rule-title">逃げ%が64%以上（全国上位25%）ならイン軸を格上げ</span>
+        <span class="rule-reliability high">常滑のイン逃げ率57%を選手適性で上振れ補正</span>
+      </div>
+      <div class="rule-desc">全国中央値<span class="num">49%</span>に対し64%以上は「イン粘り強い」タイプ。W-1（無風〜2m）と重なった日は1号艇本線の信頼度がさらに高まる。</div>
+      
+      
+      <div class="rule-buy">
+        <span class="rule-buy-label">推奨</span>
+        <div class="rule-buy-combos"><span class="boat-circle b1">1</span>軸の点数を絞って本線勝負（気象条件攻略W-1と併用推奨）</div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手）に基づく個人指数です。常滑固有の値ではないため、あくまで選手の負け方タイプの参考値とし、常滑の決まり手内訳と掛け合わせて判定してください。</div>
+  </div>
+</div>
+
+  <div class="disclaimer-box">
+    本ページの各ルールはボートリサーチ・マスタデータ（住之江：気象統計n=6,305、直近1年会場統計n=1,944など）に基づく過去の統計的傾向であり、将来のレース結果や的中を保証するものではありません。特にサンプル数（n）が小さい条件は誤差が大きく、参考情報として扱ってください。舟券の購入は自己責任・余裕資金の範囲で行ってください。
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showTab(id, btn){
+  const scope = btn.closest('.venue-content') || document;
+  scope.querySelectorAll(':scope > .subtab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  scope.querySelectorAll(':scope > .tab-bar .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function switchVenue(key){
+  document.querySelectorAll('.venue-content').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('venue-content-' + key);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('#venue-tabs .vtab').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('vtab-' + key);
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// 会場ごとの実行率データ（決まり手が成立した際、どの号艇が実行したか／住之江・蒲郡・常滑）
+const VENUE_DATA = {
+  suminoe: {
+    name: '住之江', inRate: '55%', weatherRule: 'W-1（無風〜微風）',
+    sasareText: '<span class="boat-circle b2" style="width:20px;height:20px;">2</span> を本線級に格上げ（住之江の差し勝ちの70%は2号艇）',
+    makurareText: '<span class="boat-circle b4" style="width:20px;height:20px;">4</span> と <span class="boat-circle b3" style="width:20px;height:20px;">3</span> を厚めに（住之江のまくり成立の33%／31%）',
+    makusasareText: '<span class="boat-circle b3" style="width:20px;height:20px;">3</span> と <span class="boat-circle b5" style="width:20px;height:20px;">5</span> を意識（住之江のまくり差し成立の39%／32%）'
+  },
+  gamagori: {
+    name: '蒲郡', inRate: '57%', weatherRule: 'W-1（風速1m前後）',
+    sasareText: '<span class="boat-circle b2" style="width:20px;height:20px;">2</span> を本線級に格上げ（蒲郡の差し勝ちの65%は2号艇）',
+    makurareText: '<span class="boat-circle b4" style="width:20px;height:20px;">4</span> を軸に（蒲郡のまくり成立の40%）、次点で<span class="boat-circle b2" style="width:20px;height:20px;">2</span>（29%）',
+    makusasareText: '<span class="boat-circle b3" style="width:20px;height:20px;">3</span> を中心に（蒲郡のまくり差し成立の42%）、次点で<span class="boat-circle b5" style="width:20px;height:20px;">5</span>（27%）'
+  },
+  tokoname: {
+    name: '常滑', inRate: '57%', weatherRule: 'W-1（無風〜2m）',
+    sasareText: '<span class="boat-circle b2" style="width:20px;height:20px;">2</span> を本線級に格上げ（常滑の差し勝ちの72%は2号艇）',
+    makurareText: '<span class="boat-circle b4" style="width:20px;height:20px;">4</span> を軸に（常滑のまくり成立の41%）、<span class="boat-circle b3" style="width:20px;height:20px;">3</span>・<span class="boat-circle b2" style="width:20px;height:20px;">2</span> もほぼ同格',
+    makusasareText: '<span class="boat-circle b3" style="width:20px;height:20px;">3</span> と <span class="boat-circle b5" style="width:20px;height:20px;">5</span> が同率で並ぶ（常滑のまくり差し成立の36%／36%）'
+  }
+};
+
+function diagnose(venueKey){
+  const v = VENUE_DATA[venueKey];
+  const nige = parseFloat(document.getElementById('in-nige-'+venueKey).value) || 0;
+  const sasare = parseFloat(document.getElementById('in-sasare-'+venueKey).value) || 0;
+  const makurare = parseFloat(document.getElementById('in-makurare-'+venueKey).value) || 0;
+  const makusasare = parseFloat(document.getElementById('in-makusasare-'+venueKey).value) || 0;
+
+  // 全国基準値（コース1・出走数20以上, n=1,531選手）
+  const TH = {
+    sasare:   {mid:11, high:20, extreme:29},
+    makurare: {mid:14, high:25, extreme:34},
+    makusasare:{mid:11, high:19, extreme:27},
+    nige:     {low:35, mid:49, high:64}
+  };
+
+  const scores = [
+    {key:'sasare',   label:'差され（2号艇に弱い）', val:sasare,   th:TH.sasare, text:v.sasareText},
+    {key:'makurare', label:'捲られ（外側艇に弱い）', val:makurare, th:TH.makurare, text:v.makurareText},
+    {key:'makusasare',label:'捲り差され（外側艇に弱い）', val:makusasare, th:TH.makusasare, text:v.makusasareText}
+  ];
+  scores.forEach(s => s.ratio = s.val / s.th.high);
+  scores.sort((a,b) => b.ratio - a.ratio);
+  const top = scores[0];
+
+  let html = '';
+  const box = (title, body, tone) => {
+    const bg = tone==='warn' ? 'rgba(255,59,59,.07)' : tone==='good' ? 'rgba(0,184,107,.08)' : 'var(--bg3)';
+    const bd = tone==='warn' ? 'rgba(255,59,59,.25)' : tone==='good' ? 'rgba(0,184,107,.25)' : 'var(--border)';
+    return '<div style="background:'+bg+';border:1px solid '+bd+';border-radius:8px;padding:.8rem 1rem;margin-bottom:8px;">'
+      + '<div style="font-weight:700;font-size:.85rem;color:var(--text);margin-bottom:4px;">'+title+'</div>'
+      + '<div style="font-size:.78rem;color:var(--text2);line-height:1.7;">'+body+'</div></div>';
+  };
+
+  if (nige >= TH.nige.high && top.ratio < 1) {
+    html += box('👑 イン軸を格上げ（P-4該当）',
+      '逃げ%='+nige.toFixed(0)+'% は全国上位25%（64%以上）。他の弱点指標も基準内のため、この1号艇はイン粘り強いタイプ。'+v.weatherRule+'と重なれば1号艇本線の信頼度がさらに上がる。', 'good');
+  }
+
+  if (top.ratio >= 1) {
+    const level = top.val >= top.th.extreme ? '最重要警戒（上位10%水準）' : '警戒（上位25%水準）';
+    html += box('⚠️ '+top.label+' '+level,
+      top.key+'%='+top.val.toFixed(0)+'% が基準（'+top.th.high+'%）を超過。狙い目：'+top.text+'。', 'warn');
+  }
+
+  if (nige < TH.nige.low) {
+    html += box('ℹ️ 逃げ%が低め',
+      '逃げ%='+nige.toFixed(0)+'% は全国下位25%（34%未満）。'+v.name+'の平均イン率'+v.inRate+'より割り引いて評価し、1号艇を軸から外す／点数を絞らない判断も検討。', null);
+  }
+
+  if (top.ratio < 1 && nige < TH.nige.high) {
+    html += box('標準的な1号艇',
+      '入力値はいずれも全国基準の範囲内。特定の弱点は際立っておらず、'+v.name+'の平均的なイン逃げ率（'+v.inRate+'）や気象条件攻略カードを基準に判断してください。', null);
+  }
+
+  document.getElementById('diag-result-'+venueKey).innerHTML = html;
+}
+</script>
+
+</body>
+</html>
