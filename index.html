@@ -1189,14 +1189,17 @@ table:not(.tenji-table):not(.prob-table) tr:last-child td {
 .simple-toggle-btn:hover { background: var(--bg3); }
 .simple-toggle-btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-/* シンプル表示モード：条件と買い目だけ残し、補足情報を隠す */
+/* シンプル表示モード：条件と買い目を主役にしつつ、根拠データは折りたたみで確認できるようにする */
 body.simple-mode .rule-tag,
 body.simple-mode .rule-reliability,
 body.simple-mode .venue-freq-note,
-body.simple-mode .rule-stats,
-body.simple-mode .rule-desc-details,
 body.simple-mode .section-heading-note,
 body.simple-mode .rule-desc { display: none !important; }
+/* 根拠（rule-desc-details）は隠さず、閉じた折りたたみとして表示する */
+body.simple-mode .rule-desc-details { display: block; }
+/* 統計数値（rule-stats）は根拠の折りたたみを開いたときだけ一緒に表示する */
+body.simple-mode .rule-stats { display: none; }
+body.simple-mode .rule-desc-details[open] ~ .rule-stats { display: flex; }
 body.simple-mode .rule-card-head { gap: 6px; margin-bottom: .5rem; }
 body.simple-mode .rule-title { font-size: 1.05rem; min-width: 100%; order: 1; }
 body.simple-mode .rule-no { order: 0; }
@@ -1275,13 +1278,12 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
 .validation-note b { font-family: var(--mono); }
 </style>
 </head>
-<body>
+<body class="simple-mode">
 
 <header class="site-header">
   <div class="nav-inner">
     <div class="logo"><span class="logo-icon">🚤</span>BRC攻略データベース</div>
     <div class="header-right">
-      <button id="simple-mode-toggle" class="simple-toggle-btn" onclick="toggleSimpleMode()">🔎 シンプル表示</button>
       <div class="header-meta-area">
         <div class="header-meta"><strong>住之江</strong>｜条件攻略</div>
         <div class="header-meta">データ最終更新 2026-06-25</div>
@@ -1951,9 +1953,20 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability high">住之江：差し勝ちの70%は2号艇（n=227中159）</span>
       </div>
       <div class="venue-freq-note">会場出現率：差し12%（3会場中最高、蒲郡より+35%・常滑より+14%）</div>
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 差され%20%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>38.6%</b></span>
+        <span class="hb-diff">全国平均比 -13.0pt（n=386）</span>
+      </div>
       <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">
-        全国の1号艇平均は<span class="num">差され% 中央値11%</span>。20%（上位25%）を超える選手は「差しに弱いイン屋」。住之江で1号艇が「差し」で負ける227レースのうち<span class="num">159レース（70%）</span>は2号艇が原因で、他コースは僅か。差されタイプの1号艇なら2号艇の信頼度が一段上がる。
+        全国の1号艇平均は<span class="num">差され% 中央値11%</span>。20%（上位25%）を超える選手は「差しに弱いイン屋」。住之江で1号艇が「差し」で負ける227レースのうち<span class="num">159レース（70%）</span>は2号艇が原因で、他コースは僅か。差されタイプの1号艇なら2号艇の信頼度が一段上がる。<br>
+        <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>差され%が上がるほど1号艇自身の1着率は段階的に下がる――全体平均<span class="num">51.6%</span>に対し、11%以上で<span class="num">45.4%</span>（-6.2pt・n=738）、20%以上で<span class="num">38.6%</span>（-13.0pt・n=386）、29%以上（上位10%）では<span class="num">33.6%</span>（-18.0pt・n=143）まで低下する。「差されやすい1号艇」ほど自滅パターンが増えるのが数字で確認できる。
       </div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">11%以上：<b>45.4%</b>（-6.2pt・n=738）</span>
+        <span class="rule-stat">20%以上：<b>38.6%</b>（-13.0pt・n=386）</span>
+        <span class="rule-stat">29%以上：<b>33.6%</b>（-18.0pt・n=143）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">
@@ -1971,9 +1984,20 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability high">住之江：まくり成立316件中 4号艇33%／3号艇31%／2号艇26%</span>
       </div>
       <div class="venue-freq-note">会場出現率：まくり16%（3会場中最高、常滑より+11%）</div>
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 捲られ%25%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>38.0%</b></span>
+        <span class="hb-diff">全国平均比 -13.6pt（n=361）</span>
+      </div>
       <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">
-        全国中央値は<span class="num">14%</span>、34%以上（上位10%）は「まくりに弱い」選手として要警戒。住之江でまくりが決まる316レースの内訳は4号艇<span class="num">33%</span>・3号艇<span class="num">31%</span>とほぼ同格、2号艇も<span class="num">26%</span>と侮れない。K-3／K-4カードの2着分布と合わせてフォーメーションを組むと精度が上がる。
+        全国中央値は<span class="num">14%</span>、34%以上（上位10%）は「まくりに弱い」選手として要警戒。住之江でまくりが決まる316レースの内訳は4号艇<span class="num">33%</span>・3号艇<span class="num">31%</span>とほぼ同格、2号艇も<span class="num">26%</span>と侮れない。K-3／K-4カードの2着分布と合わせてフォーメーションを組むと精度が上がる。<br>
+        <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、捲られ%14%以上で<span class="num">44.6%</span>（-7.0pt・n=750）、25%以上で<span class="num">38.0%</span>（-13.6pt・n=361）、34%以上（上位10%）では<span class="num">31.9%</span>（-19.7pt・n=146）と、3指標の中で最も下落幅が大きい。「捲られ弱い」1号艇は最も信頼度を割り引くべきタイプ。
       </div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">14%以上：<b>44.6%</b>（-7.0pt・n=750）</span>
+        <span class="rule-stat">25%以上：<b>38.0%</b>（-13.6pt・n=361）</span>
+        <span class="rule-stat">34%以上：<b>31.9%</b>（-19.7pt・n=146）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">
@@ -1991,9 +2015,20 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability mid">住之江：まくり差し成立210件中 3号艇39%／5号艇32%／4号艇24%</span>
       </div>
       <div class="venue-freq-note">会場出現率：まくり差し11%（3会場中最低、蒲郡より-14%）</div>
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 捲り差され%18%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>43.9%</b></span>
+        <span class="hb-diff">全国平均比 -7.7pt（n=395）</span>
+      </div>
       <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">
-        全国中央値は<span class="num">11%</span>。住之江でまくり差しが決まる210レースの内訳は3号艇<span class="num">39%</span>が最多だが、5号艇も<span class="num">32%</span>と全国的にはあまり見ない高さで住之江特有の傾向。1号艇がこのタイプで負けやすい選手の日は、5号艇の一撃を軽視しない。
+        全国中央値は<span class="num">11%</span>。住之江でまくり差しが決まる210レースの内訳は3号艇<span class="num">39%</span>が最多だが、5号艇も<span class="num">32%</span>と全国的にはあまり見ない高さで住之江特有の傾向。1号艇がこのタイプで負けやすい選手の日は、5号艇の一撃を軽視しない。<br>
+        <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、捲り差され%11%以上で<span class="num">48.0%</span>（-3.6pt・n=759）、18%以上で<span class="num">43.9%</span>（-7.7pt・n=395）、27%以上（上位10%）では<span class="num">40.5%</span>（-11.1pt・n=141）。3指標の中では下落幅が最も小さく、単独の警戒材料としては差され%・捲られ%より優先度は下がる。
       </div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">11%以上：<b>48.0%</b>（-3.6pt・n=759）</span>
+        <span class="rule-stat">18%以上：<b>43.9%</b>（-7.7pt・n=395）</span>
+        <span class="rule-stat">27%以上：<b>40.5%</b>（-11.1pt・n=141）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">
@@ -2023,9 +2058,11 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
     </div>
 
     <div class="disclaimer-box">
-      「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手）に基づく個人指数です。住之江固有の値ではないため、あくまで「その選手がどう負けやすいタイプか」を見る指標として使い、住之江の決まり手内訳（コース別の実行率）と掛け合わせて判定してください。
+      「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手、n=1,531）に基づく個人指数です。住之江固有の値ではないため、あくまで「その選手がどう負けやすいタイプか」を見る指標として使い、住之江の決まり手内訳（コース別の実行率）と掛け合わせて判定してください。<br>
+      各カードの「1号艇1着率」「検証」の数値は、この全国1,531選手を実際にしきい値で絞り込み、絞り込んだ選手たちの1着率平均を全体平均（51.6%）と比較したものです（自己相関的な検証であり、当日の対戦相手構成までは反映していません）。
     </div>
   </div>
+
 
 
 </div>
@@ -2503,9 +2540,18 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability high">蒲郡：差し勝ちの65%は2号艇（n=150中98）</span>
       </div>
       <div class="venue-freq-note">会場出現率：差し9%（3会場中最低、住之江より-26%・常滑より-16%）</div>
-      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。蒲郡で1号艇が「差し」で負ける150レースのうち<span class="num">98レース（65%）</span>は2号艇が原因。</div></details>
-      
-      
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 差され%20%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>38.6%</b></span>
+        <span class="hb-diff">全国平均比 -13.0pt（n=386）</span>
+      </div>
+      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。蒲郡で1号艇が「差し」で負ける150レースのうち<span class="num">98レース（65%）</span>は2号艇が原因。<br>
+      <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、差され%11%以上で<span class="num">45.4%</span>（-6.2pt・n=738）、20%以上で<span class="num">38.6%</span>（-13.0pt・n=386）、29%以上（上位10%）では<span class="num">33.6%</span>（-18.0pt・n=143）まで低下する。</div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">11%以上：<b>45.4%</b>（-6.2pt・n=738）</span>
+        <span class="rule-stat">20%以上：<b>38.6%</b>（-13.0pt・n=386）</span>
+        <span class="rule-stat">29%以上：<b>33.6%</b>（-18.0pt・n=143）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>を本線級に格上げ</div>
@@ -2522,9 +2568,18 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability high">蒲郡：まくり成立269件中 4号艇40%／2号艇29%／3号艇22%</span>
       </div>
       <div class="venue-freq-note">会場出現率：まくり15%（住之江より-5%）</div>
-      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">14%</span>。蒲郡のまくりは4号艇が主体（40%）で、住之江・常滑よりもさらに4号艇偏重が強い。</div></details>
-      
-      
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 捲られ%25%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>38.0%</b></span>
+        <span class="hb-diff">全国平均比 -13.6pt（n=361）</span>
+      </div>
+      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">14%</span>。蒲郡のまくりは4号艇が主体（40%）で、住之江・常滑よりもさらに4号艇偏重が強い。<br>
+      <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、捲られ%14%以上で<span class="num">44.6%</span>（-7.0pt・n=750）、25%以上で<span class="num">38.0%</span>（-13.6pt・n=361）、34%以上（上位10%）では<span class="num">31.9%</span>（-19.7pt・n=146）と、3指標の中で最も下落幅が大きい。</div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">14%以上：<b>44.6%</b>（-7.0pt・n=750）</span>
+        <span class="rule-stat">25%以上：<b>38.0%</b>（-13.6pt・n=361）</span>
+        <span class="rule-stat">34%以上：<b>31.9%</b>（-19.7pt・n=146）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">3連複<span class="boat-circle b4">4</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span>／<span class="boat-circle b4">4</span><span class="boat-circle b2">2</span><span class="boat-circle b3">3</span>ボックス中心</div>
@@ -2541,9 +2596,18 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability mid">蒲郡：まくり差し成立219件中 3号艇42%／5号艇27%／4号艇24%</span>
       </div>
       <div class="venue-freq-note">会場出現率：まくり差し13%（3会場中最高、住之江より+17%）</div>
-      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。蒲郡のまくり差しは3号艇が最多だが、5号艇も4分の1超で油断できない。</div></details>
-      
-      
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 捲り差され%18%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>43.9%</b></span>
+        <span class="hb-diff">全国平均比 -7.7pt（n=395）</span>
+      </div>
+      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。蒲郡のまくり差しは3号艇が最多だが、5号艇も4分の1超で油断できない。<br>
+      <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、捲り差され%11%以上で<span class="num">48.0%</span>（-3.6pt・n=759）、18%以上で<span class="num">43.9%</span>（-7.7pt・n=395）、27%以上（上位10%）では<span class="num">40.5%</span>（-11.1pt・n=141）。3指標の中では下落幅が最も小さい。</div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">11%以上：<b>48.0%</b>（-3.6pt・n=759）</span>
+        <span class="rule-stat">18%以上：<b>43.9%</b>（-7.7pt・n=395）</span>
+        <span class="rule-stat">27%以上：<b>40.5%</b>（-11.1pt・n=141）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">3連複<span class="boat-circle b3">3</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span>／<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b4">4</span>を配当妙味込みで</div>
@@ -2569,7 +2633,7 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
       </div>
     </div>
 
-    <div class="disclaimer-box">「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手）に基づく個人指数です。蒲郡固有の値ではないため、あくまで選手の負け方タイプの参考値とし、蒲郡の決まり手内訳と掛け合わせて判定してください。</div>
+    <div class="disclaimer-box">「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手、n=1,531）に基づく個人指数です。蒲郡固有の値ではないため、あくまで選手の負け方タイプの参考値とし、蒲郡の決まり手内訳と掛け合わせて判定してください。各カードの「1号艇1着率」「検証」の数値は、この全国1,531選手をしきい値で絞り込んだ集団の1着率平均を全体平均（51.6%）と比較したものです（自己相関的な検証であり、当日の対戦相手構成までは反映していません）。</div>
   </div>
 </div>
 
@@ -3051,9 +3115,18 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability high">常滑：差し勝ちの72%は2号艇（n=184中133）</span>
       </div>
       <div class="venue-freq-note">会場出現率：差し10%（3会場中間、住之江より-12%・蒲郡より+19%）</div>
-      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。常滑で1号艇が「差し」で負ける184レースのうち<span class="num">133レース（72%）</span>は2号艇が原因で、住之江・蒲郡よりもさらに2号艇への偏りが強い。</div></details>
-      
-      
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 差され%20%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>38.6%</b></span>
+        <span class="hb-diff">全国平均比 -13.0pt（n=386）</span>
+      </div>
+      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。常滑で1号艇が「差し」で負ける184レースのうち<span class="num">133レース（72%）</span>は2号艇が原因で、住之江・蒲郡よりもさらに2号艇への偏りが強い。<br>
+      <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、差され%11%以上で<span class="num">45.4%</span>（-6.2pt・n=738）、20%以上で<span class="num">38.6%</span>（-13.0pt・n=386）、29%以上（上位10%）では<span class="num">33.6%</span>（-18.0pt・n=143）まで低下する。</div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">11%以上：<b>45.4%</b>（-6.2pt・n=738）</span>
+        <span class="rule-stat">20%以上：<b>38.6%</b>（-13.0pt・n=386）</span>
+        <span class="rule-stat">29%以上：<b>33.6%</b>（-18.0pt・n=143）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">2連単<span class="boat-circle b2">2</span>-<span class="boat-circle b1">1</span>を本線級に格上げ</div>
@@ -3070,9 +3143,18 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability high">常滑：まくり成立262件中 4号艇41%／3号艇24%／2号艇22%</span>
       </div>
       <div class="venue-freq-note">会場出現率：まくり15%（住之江より-10%）</div>
-      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">14%</span>。常滑のまくりは4号艇が主体（41%）で、2位以下の3号艇・2号艇はほぼ同格。</div></details>
-      
-      
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 捲られ%25%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>38.0%</b></span>
+        <span class="hb-diff">全国平均比 -13.6pt（n=361）</span>
+      </div>
+      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">14%</span>。常滑のまくりは4号艇が主体（41%）で、2位以下の3号艇・2号艇はほぼ同格。<br>
+      <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、捲られ%14%以上で<span class="num">44.6%</span>（-7.0pt・n=750）、25%以上で<span class="num">38.0%</span>（-13.6pt・n=361）、34%以上（上位10%）では<span class="num">31.9%</span>（-19.7pt・n=146）と、3指標の中で最も下落幅が大きい。</div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">14%以上：<b>44.6%</b>（-7.0pt・n=750）</span>
+        <span class="rule-stat">25%以上：<b>38.0%</b>（-13.6pt・n=361）</span>
+        <span class="rule-stat">34%以上：<b>31.9%</b>（-19.7pt・n=146）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">3連複<span class="boat-circle b4">4</span><span class="boat-circle b1">1</span><span class="boat-circle b5">5</span>／<span class="boat-circle b4">4</span><span class="boat-circle b3">3</span><span class="boat-circle b2">2</span>ボックス中心</div>
@@ -3089,9 +3171,18 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
         <span class="rule-reliability mid">常滑：まくり差し成立209件中 3号艇36%／5号艇36%（同率）</span>
       </div>
       <div class="venue-freq-note">会場出現率：まくり差し12%（3会場中間、蒲郡より-7%）</div>
-      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。常滑のまくり差しは3号艇と5号艇が全く同じ36%で並んでおり、どちらか一方に絞らず両方を買い目に入れるのが有効。</div></details>
-      
-      
+      <div class="hitrate-badge weak">
+        <span class="hb-cond">1号艇 捲り差され%18%以上（全国上位25%）</span>
+        <span class="hb-rate">1号艇1着率 <b>43.9%</b></span>
+        <span class="hb-diff">全国平均比 -7.7pt（n=395）</span>
+      </div>
+      <details class="rule-desc-details"><summary>根拠データを見る</summary><div class="rule-desc">全国中央値は<span class="num">11%</span>。常滑のまくり差しは3号艇と5号艇が全く同じ36%で並んでおり、どちらか一方に絞らず両方を買い目に入れるのが有効。<br>
+      <strong>検証（全国コース1・出走20走以上 n=1,531選手）：</strong>全体平均<span class="num">51.6%</span>に対し、捲り差され%11%以上で<span class="num">48.0%</span>（-3.6pt・n=759）、18%以上で<span class="num">43.9%</span>（-7.7pt・n=395）、27%以上（上位10%）では<span class="num">40.5%</span>（-11.1pt・n=141）。3指標の中では下落幅が最も小さい。</div></details>
+      <div class="rule-stats">
+        <span class="rule-stat">11%以上：<b>48.0%</b>（-3.6pt・n=759）</span>
+        <span class="rule-stat">18%以上：<b>43.9%</b>（-7.7pt・n=395）</span>
+        <span class="rule-stat">27%以上：<b>40.5%</b>（-11.1pt・n=141）</span>
+      </div>
       <div class="rule-buy">
         <span class="rule-buy-label">推奨</span>
         <div class="rule-buy-combos">3連複<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b1">1</span>／<span class="boat-circle b3">3</span><span class="boat-circle b5">5</span><span class="boat-circle b4">4</span>ボックス</div>
@@ -3117,7 +3208,7 @@ body.simple-mode .hitrate-badge { margin: .3rem 0 .55rem; }
       </div>
     </div>
 
-    <div class="disclaimer-box">「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手）に基づく個人指数です。常滑固有の値ではないため、あくまで選手の負け方タイプの参考値とし、常滑の決まり手内訳と掛け合わせて判定してください。</div>
+    <div class="disclaimer-box">「差され%」「捲られ%」「捲り差され%」「逃げ%」は全国集計（コース1・出走数20以上の選手、n=1,531）に基づく個人指数です。常滑固有の値ではないため、あくまで選手の負け方タイプの参考値とし、常滑の決まり手内訳と掛け合わせて判定してください。各カードの「1号艇1着率」「検証」の数値は、この全国1,531選手をしきい値で絞り込んだ集団の1着率平均を全体平均（51.6%）と比較したものです（自己相関的な検証であり、当日の対戦相手構成までは反映していません）。</div>
   </div>
 
   <div id="tab-meister-tokoname" class="subtab-panel">
@@ -3322,24 +3413,7 @@ document.addEventListener('DOMContentLoaded', function(){
   renderMeisterRanking('tokoname');
 });
 
-function toggleSimpleMode(){
-  const on = document.body.classList.toggle('simple-mode');
-  document.getElementById('simple-mode-toggle').classList.toggle('on', on);
-  try { localStorage.setItem('brc-simple-mode', on ? '1' : '0'); } catch(e){}
-}
-(function(){
-  try {
-    const saved = localStorage.getItem('brc-simple-mode');
-    const on = saved === null ? true : saved === '1'; // 初回はシンプル表示がデフォルト
-    if (on) {
-      document.addEventListener('DOMContentLoaded', function(){
-        document.body.classList.add('simple-mode');
-        const btn = document.getElementById('simple-mode-toggle');
-        if (btn) btn.classList.add('on');
-      });
-    }
-  } catch(e){}
-})();
+// シンプル表示に固定（切替不要）。body には常に class="simple-mode" を付与済み。
 
 function diagnose(venueKey){
   const v = VENUE_DATA[venueKey];
